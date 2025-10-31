@@ -17,7 +17,12 @@ const loginSchema = z.object({
 const signupSchema = z.object({
   name: z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100),
   email: z.string().trim().email({ message: "Invalid email address" }),
+  phone: z.string().trim().min(10, { message: "Phone number must be at least 10 digits" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 const Auth = () => {
@@ -34,7 +39,9 @@ const Auth = () => {
   // Signup form state
   const [signupName, setSignupName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
+  const [signupPhone, setSignupPhone] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     // Check if user is already logged in
@@ -112,8 +119,10 @@ const Auth = () => {
     try {
       const validated = signupSchema.parse({ 
         name: signupName, 
-        email: signupEmail, 
-        password: signupPassword 
+        email: signupEmail,
+        phone: signupPhone,
+        password: signupPassword,
+        confirmPassword: confirmPassword,
       });
       
       const redirectUrl = `${window.location.origin}/`;
@@ -125,6 +134,7 @@ const Auth = () => {
           emailRedirectTo: redirectUrl,
           data: {
             full_name: validated.name,
+            phone: validated.phone,
           },
         },
       });
@@ -151,7 +161,9 @@ const Auth = () => {
         setIsLogin(true);
         setSignupName("");
         setSignupEmail("");
+        setSignupPhone("");
         setSignupPassword("");
+        setConfirmPassword("");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -180,28 +192,9 @@ const Auth = () => {
 
         <Card className="shadow-elevated">
           <CardContent className="p-6">
-            <div className="flex gap-2 mb-6">
-              <Button
-                variant={isLogin ? "default" : "outline"}
-                className="flex-1"
-                onClick={() => {
-                  setIsLogin(true);
-                  setErrors({});
-                }}
-              >
-                Login
-              </Button>
-              <Button
-                variant={!isLogin ? "default" : "outline"}
-                className="flex-1"
-                onClick={() => {
-                  setIsLogin(false);
-                  setErrors({});
-                }}
-              >
-                Sign Up
-              </Button>
-            </div>
+            <h2 className="text-2xl font-bold text-center mb-6">
+              {isLogin ? "Welcome Back" : "Create Account"}
+            </h2>
 
             {isLogin ? (
               <form onSubmit={handleLogin} className="space-y-4">
@@ -246,6 +239,21 @@ const Auth = () => {
                 >
                   {loading ? "Logging in..." : "Login"}
                 </Button>
+                <div className="text-center mt-4">
+                  <p className="text-sm text-muted-foreground">
+                    Don't have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsLogin(false);
+                        setErrors({});
+                      }}
+                      className="text-primary hover:underline font-semibold"
+                    >
+                      Sign up
+                    </button>
+                  </p>
+                </div>
               </form>
             ) : (
               <form onSubmit={handleSignup} className="space-y-4">
@@ -284,6 +292,23 @@ const Auth = () => {
                   )}
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="signup-phone">Phone Number</Label>
+                  <Input
+                    id="signup-phone"
+                    type="tel"
+                    placeholder="+1 (555) 123-4567"
+                    value={signupPhone}
+                    onChange={(e) => setSignupPhone(e.target.value)}
+                    disabled={loading}
+                  />
+                  {errors.phone && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.phone}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
                   <Input
                     id="signup-password"
@@ -300,6 +325,23 @@ const Auth = () => {
                     </p>
                   )}
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={loading}
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.confirmPassword}
+                    </p>
+                  )}
+                </div>
                 <Button
                   type="submit"
                   className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90"
@@ -307,6 +349,21 @@ const Auth = () => {
                 >
                   {loading ? "Creating account..." : "Sign Up"}
                 </Button>
+                <div className="text-center mt-4">
+                  <p className="text-sm text-muted-foreground">
+                    Have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsLogin(true);
+                        setErrors({});
+                      }}
+                      className="text-primary hover:underline font-semibold"
+                    >
+                      Login
+                    </button>
+                  </p>
+                </div>
               </form>
             )}
           </CardContent>

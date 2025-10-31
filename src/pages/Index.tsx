@@ -24,6 +24,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
 
 const Index = () => {
   // Map Filters state used in the Map tab (25% sidebar / 75% map)
@@ -32,6 +33,7 @@ const Index = () => {
     stay: "",
     vehicle: { needed: false, type: "" },
     interests: [] as string[],
+    duration: 4, // hours
   });
   
   const [searchLocation, setSearchLocation] = useState("");
@@ -324,6 +326,34 @@ const Index = () => {
                               Filters
                             </h2>
 
+                            {/* Duration Filter */}
+                            <Collapsible defaultOpen>
+                              <CollapsibleTrigger className="flex items-center justify-between w-full">
+                                <h3 className="font-medium text-foreground">Guide Duration</h3>
+                                <ChevronDown className="h-4 w-4" />
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="pt-4 space-y-4">
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <Label className="text-foreground">Hours needed</Label>
+                                    <span className="text-sm font-semibold text-primary">{filters.duration}h</span>
+                                  </div>
+                                  <Slider
+                                    value={[filters.duration]}
+                                    onValueChange={(value) => setFilters({ ...filters, duration: value[0] })}
+                                    min={1}
+                                    max={24}
+                                    step={1}
+                                    className="w-full"
+                                  />
+                                  <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>1h</span>
+                                    <span>24h</span>
+                                  </div>
+                                </div>
+                              </CollapsibleContent>
+                            </Collapsible>
+
                             {/* Vehicle */}
                             <Collapsible defaultOpen>
                               <CollapsibleTrigger className="flex items-center justify-between w-full">
@@ -453,6 +483,34 @@ const Index = () => {
                           Filters
                         </h2>
                       </div>
+
+                      {/* Duration Filter */}
+                      <Collapsible defaultOpen>
+                        <CollapsibleTrigger className="flex items-center justify-between w-full">
+                          <h3 className="font-medium text-foreground">Guide Duration</h3>
+                          <ChevronDown className="h-4 w-4" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="pt-4 space-y-4">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <Label className="text-foreground">Hours needed</Label>
+                              <span className="text-sm font-semibold text-primary">{filters.duration}h</span>
+                            </div>
+                            <Slider
+                              value={[filters.duration]}
+                              onValueChange={(value) => setFilters({ ...filters, duration: value[0] })}
+                              min={1}
+                              max={24}
+                              step={1}
+                              className="w-full"
+                            />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>1h</span>
+                              <span>24h</span>
+                            </div>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
 
                       {/* Vehicle */}
                       <Collapsible defaultOpen>
