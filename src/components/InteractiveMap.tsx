@@ -97,9 +97,9 @@ const InteractiveMap = () => {
   };
 
   return (
-    <div className="relative w-full h-[600px] rounded-lg overflow-hidden z-0">
+    <div className="relative w-full h-[600px] rounded-lg overflow-hidden">
       {selectedGuide && (
-        <Card className="absolute top-4 left-4 z-10 p-4 max-w-sm bg-background/95 backdrop-blur">
+        <Card className="absolute top-4 left-4 z-[1000] p-4 max-w-sm bg-background/95 backdrop-blur shadow-lg">
           <div className="space-y-3">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
