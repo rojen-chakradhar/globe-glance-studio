@@ -24,12 +24,15 @@ interface Filters {
 
 interface InteractiveMapProps {
   filters?: Filters;
+  searchLocation?: string;
+  showBuddies?: boolean;
 }
 
-const InteractiveMap = ({ filters }: InteractiveMapProps) => {
+const InteractiveMap = ({ filters, searchLocation = "", showBuddies = false }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
 
   // Mock guide data
@@ -41,11 +44,32 @@ const InteractiveMap = ({ filters }: InteractiveMapProps) => {
     { id: 5, name: 'Bikash Lama', location: [27.7180, 85.295], rating: 4.6, languages: ['English', 'Nepali', 'Chinese'], available: true, specialty: 'Adventure Tours' },
   ];
 
+  // Get user's current location
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([position.coords.latitude, position.coords.longitude]);
+        },
+        () => {
+          // Fallback to default location if geolocation fails
+          setUserLocation([27.7172, 85.324]);
+        }
+      );
+    } else {
+      setUserLocation([27.7172, 85.324]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!mapContainer.current || !userLocation) return;
+
+    const initialLocation = showBuddies && searchLocation 
+      ? [27.7172, 85.324] as [number, number] // Searched location (default to Kathmandu for demo)
+      : userLocation;
 
     // Initialize map
-    map.current = L.map(mapContainer.current).setView([27.7172, 85.324], 13);
+    map.current = L.map(mapContainer.current).setView(initialLocation, 13);
 
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -80,27 +104,29 @@ const InteractiveMap = ({ filters }: InteractiveMapProps) => {
       });
     };
 
-    // Add guide markers
-    guides.forEach((guide) => {
-      const marker = L.marker(guide.location, {
-        icon: createGuideIcon(guide.available),
-      }).addTo(map.current!);
+    // Add guide markers only if showBuddies is true
+    if (showBuddies) {
+      guides.forEach((guide) => {
+        const marker = L.marker(guide.location, {
+          icon: createGuideIcon(guide.available),
+        }).addTo(map.current!);
 
-      marker.on('click', () => {
-        setSelectedGuide(guide);
-        map.current?.flyTo(guide.location, 15, {
-          duration: 1,
+        marker.on('click', () => {
+          setSelectedGuide(guide);
+          map.current?.flyTo(guide.location, 15, {
+            duration: 1,
+          });
         });
-      });
 
-      markersRef.current.push(marker);
-    });
+        markersRef.current.push(marker);
+      });
+    }
 
     return () => {
       markersRef.current.forEach(marker => marker.remove());
       map.current?.remove();
     };
-  }, []);
+  }, [userLocation, searchLocation, showBuddies]);
 
   const handleRequestGuide = (guide: Guide) => {
     alert(`Request sent to ${guide.name}! They will contact you shortly.`);

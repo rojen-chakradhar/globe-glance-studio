@@ -25,6 +25,15 @@ const Index = () => {
     vehicle: { needed: false, type: "" },
     interests: [] as string[],
   });
+  
+  const [searchLocation, setSearchLocation] = useState("");
+  const [showMobileMap, setShowMobileMap] = useState(false);
+
+  const handleLocationSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchLocation.trim()) {
+      setShowMobileMap(true);
+    }
+  };
 
   const timeOptions = ["1 hour", "Few hours (2-4)", "Half day", "Full day", "2-3 days", "Week+"];
   const stayOptions = ["No stay needed", "Homestay", "Hotel", "Hostel", "Resort"];
@@ -113,6 +122,9 @@ const Index = () => {
                           type="text" 
                           placeholder="Where to?" 
                           className="w-full pl-10"
+                          value={searchLocation}
+                          onChange={(e) => setSearchLocation(e.target.value)}
+                          onKeyDown={handleLocationSearch}
                         />
                       </div>
                       
@@ -279,13 +291,36 @@ const Index = () => {
                       </Sheet>
                     </div>
 
+                    {/* Mobile Map - Shows only when location is searched */}
+                    {showMobileMap && (
+                      <div className="lg:hidden relative z-0 mb-4">
+                        <InteractiveMap filters={filters} searchLocation={searchLocation} showBuddies={true} />
+                      </div>
+                    )}
+
                     {/* Map Container - Left side on desktop, hidden on mobile */}
                     <div className="lg:col-span-3 relative z-0 hidden lg:block">
-                      <InteractiveMap filters={filters} />
+                      <InteractiveMap filters={filters} searchLocation={searchLocation} showBuddies={!!searchLocation} />
                     </div>
 
                     {/* Filter Sidebar - Right side on desktop, hidden on mobile */}
                     <Card className="p-6 space-y-6 sticky top-[120px] lg:col-span-1 hidden lg:block">
+                      {/* Desktop Location Search */}
+                      <div>
+                        <Label className="text-sm font-medium text-foreground mb-2 block">Search Location</Label>
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input 
+                            type="text" 
+                            placeholder="Where to?" 
+                            className="w-full pl-10"
+                            value={searchLocation}
+                            onChange={(e) => setSearchLocation(e.target.value)}
+                            onKeyDown={handleLocationSearch}
+                          />
+                        </div>
+                      </div>
+
                       <div className="flex items-center justify-between">
                         <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                           <Sparkles className="h-5 w-5 text-primary" />
