@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown } from "lucide-react";
+import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
 import traveloneLogo from "@/assets/travelone-logo.png";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -103,17 +104,27 @@ const Index = () => {
 
                   {/* Sidebar (25%) + Map (75%) */}
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-                    {/* Map Container - Left side on desktop */}
-                    <div className="lg:col-span-3 relative z-0">
-                      {/* Mobile/Tablet Filter Button */}
+                    {/* Mobile Search and Filter - Only visible on mobile */}
+                    <div className="lg:hidden space-y-4 mb-4">
+                      {/* Location Search */}
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input 
+                          type="text" 
+                          placeholder="Where to?" 
+                          className="w-full pl-10"
+                        />
+                      </div>
+                      
+                      {/* Filter Button */}
                       <Sheet>
                         <SheetTrigger asChild>
                           <Button 
-                            className="absolute top-4 right-4 z-[1000] lg:hidden bg-background/95 backdrop-blur shadow-lg"
-                            size="sm"
+                            variant="default"
+                            className="w-full"
                           >
                             <Sparkles className="h-4 w-4 mr-2" />
-                            Filters
+                            Show Filters
                           </Button>
                         </SheetTrigger>
                         <SheetContent side="right" className="w-[300px] sm:w-[400px] overflow-y-auto z-[1100]">
@@ -266,7 +277,10 @@ const Index = () => {
                           </div>
                         </SheetContent>
                       </Sheet>
+                    </div>
 
+                    {/* Map Container - Left side on desktop, hidden on mobile */}
+                    <div className="lg:col-span-3 relative z-0 hidden lg:block">
                       <InteractiveMap filters={filters} />
                     </div>
 
