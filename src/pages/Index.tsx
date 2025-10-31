@@ -18,9 +18,14 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Plane className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold text-foreground">Nepal Travel Guide</span>
+              <span className="text-xl font-bold text-foreground">Travelone</span>
             </Link>
             <div className="flex items-center gap-4">
+              <Link to="/events">
+                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                  Events
+                </Button>
+              </Link>
               <Link to="/auth">
                 <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
                   Login
