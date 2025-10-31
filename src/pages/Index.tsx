@@ -65,32 +65,46 @@ const Index = () => {
               <Plane className="h-6 w-6 text-primary" />
               <span className="text-xl font-bold text-foreground">Wanderlust</span>
             </Link>
-            <div className="hidden md:flex items-center gap-8">
-              <Link to="/map">
-                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
-                  Map
-                </Button>
-              </Link>
-              <Link to="/travelbuddy">
-                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
-                  TravelBuddy
-                </Button>
-              </Link>
-              <Link to="/trips">
-                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
-                  Trips
-                </Button>
-              </Link>
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                Login
+              </Button>
               <Button className="bg-gradient-ocean text-primary-foreground hover:opacity-90">
-                Book Now
+                Sign Up
               </Button>
             </div>
           </div>
         </div>
       </nav>
 
+      {/* Navigation Buttons */}
+      <div className="fixed top-[73px] left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-center gap-4">
+            <Link to="/map">
+              <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                <MapPin className="h-4 w-4 mr-2" />
+                Map
+              </Button>
+            </Link>
+            <Link to="/travelbuddy">
+              <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                <Users className="h-4 w-4 mr-2" />
+                TravelBuddy
+              </Button>
+            </Link>
+            <Link to="/trips">
+              <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                <Plane className="h-4 w-4 mr-2" />
+                Trips
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-[73px]">
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
