@@ -14,6 +14,10 @@ import Support from "./pages/Support";
 import Discounts from "./pages/Discounts";
 import Safety from "./pages/Safety";
 import NotFound from "./pages/NotFound";
+import GuideAuth from "./pages/guide/GuideAuth";
+import GuideDashboard from "./pages/guide/GuideDashboard";
+import GuideBookings from "./pages/guide/GuideBookings";
+import GuideProfile from "./pages/guide/GuideProfile";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +38,13 @@ const App = () => (
           <Route path="/support" element={<Support />} />
           <Route path="/discounts" element={<Discounts />} />
           <Route path="/safety" element={<Safety />} />
+          
+          {/* Guide Routes */}
+          <Route path="/guide/auth" element={<GuideAuth />} />
+          <Route path="/guide" element={<GuideDashboard />} />
+          <Route path="/guide/bookings" element={<GuideBookings />} />
+          <Route path="/guide/profile" element={<GuideProfile />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
