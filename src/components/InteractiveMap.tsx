@@ -15,7 +15,18 @@ interface Guide {
   specialty: string;
 }
 
-const InteractiveMap = () => {
+interface Filters {
+  time: string;
+  stay: string;
+  vehicle: { needed: boolean; type: string };
+  interests: string[];
+}
+
+interface InteractiveMapProps {
+  filters?: Filters;
+}
+
+const InteractiveMap = ({ filters }: InteractiveMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);

@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
-import traveloneLogo from "@/assets/travelone-logo.png";
+import traveloneLogo from "@/assets/travelone-logo-new.png";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -104,10 +104,12 @@ const Index = () => {
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
                     {/* Filter Sidebar */}
                     <Card className="p-6 space-y-6 sticky top-[120px] lg:col-span-1">
-                      <h2 className="text-xl font-semibold flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-primary" />
-                        Filters
-                      </h2>
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                          <Sparkles className="h-5 w-5 text-primary" />
+                          Filters
+                        </h2>
+                      </div>
 
                       {/* Time Filter */}
                       <Collapsible defaultOpen>
@@ -210,11 +212,22 @@ const Index = () => {
                           ))}
                         </CollapsibleContent>
                       </Collapsible>
+
+                      {/* Apply Filter Button */}
+                      <Button 
+                        className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90"
+                        onClick={() => {
+                          console.log("Filtering with:", filters);
+                          // Filter logic will be handled by InteractiveMap
+                        }}
+                      >
+                        Apply Filters
+                      </Button>
                     </Card>
 
                     {/* Map Container */}
                     <div className="lg:col-span-3">
-                      <InteractiveMap />
+                      <InteractiveMap filters={filters} />
                     </div>
                   </div>
 
