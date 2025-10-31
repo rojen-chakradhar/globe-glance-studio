@@ -9,11 +9,12 @@ import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
-import traveloneLogo from "@/assets/travelone-logo-new.png";
+import traveloneLogo from "@/assets/travelone-logo.png";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Index = () => {
   // Map Filters state used in the Map tab (25% sidebar / 75% map)
@@ -102,8 +103,175 @@ const Index = () => {
 
                   {/* Sidebar (25%) + Map (75%) */}
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-                    {/* Filter Sidebar */}
-                    <Card className="p-6 space-y-6 sticky top-[120px] lg:col-span-1">
+                    {/* Map Container - Left side on desktop */}
+                    <div className="lg:col-span-3 relative">
+                      {/* Mobile/Tablet Filter Button */}
+                      <Sheet>
+                        <SheetTrigger asChild>
+                          <Button 
+                            className="absolute top-4 right-4 z-[1000] lg:hidden bg-background/95 backdrop-blur shadow-lg"
+                            size="sm"
+                          >
+                            <Sparkles className="h-4 w-4 mr-2" />
+                            Filters
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="w-[300px] sm:w-[400px] overflow-y-auto">
+                          <div className="space-y-6 pt-6">
+                            <h2 className="text-xl font-semibold flex items-center gap-2">
+                              <Sparkles className="h-5 w-5 text-primary" />
+                              Filters
+                            </h2>
+
+                            {/* Time Filter */}
+                            <Collapsible defaultOpen>
+                              <CollapsibleTrigger className="flex items-center justify-between w-full">
+                                <h3 className="font-medium">Time of Day</h3>
+                                <ChevronDown className="h-4 w-4" />
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="pt-4">
+                                <RadioGroup value={filters.time} onValueChange={(value) => setFilters({ ...filters, time: value })}>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="morning" id="mobile-morning" />
+                                    <Label htmlFor="mobile-morning">Morning</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="afternoon" id="mobile-afternoon" />
+                                    <Label htmlFor="mobile-afternoon">Afternoon</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="evening" id="mobile-evening" />
+                                    <Label htmlFor="mobile-evening">Evening</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="any" id="mobile-any-time" />
+                                    <Label htmlFor="mobile-any-time">Any Time</Label>
+                                  </div>
+                                </RadioGroup>
+                              </CollapsibleContent>
+                            </Collapsible>
+
+                            {/* Stay Duration */}
+                            <Collapsible defaultOpen>
+                              <CollapsibleTrigger className="flex items-center justify-between w-full">
+                                <h3 className="font-medium">Length of Stay</h3>
+                                <ChevronDown className="h-4 w-4" />
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="pt-4">
+                                <RadioGroup value={filters.stay} onValueChange={(value) => setFilters({ ...filters, stay: value })}>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="1-3" id="mobile-1-3" />
+                                    <Label htmlFor="mobile-1-3">1-3 days</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="4-7" id="mobile-4-7" />
+                                    <Label htmlFor="mobile-4-7">4-7 days</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="7+" id="mobile-7plus" />
+                                    <Label htmlFor="mobile-7plus">7+ days</Label>
+                                  </div>
+                                </RadioGroup>
+                              </CollapsibleContent>
+                            </Collapsible>
+
+                            {/* Vehicle */}
+                            <Collapsible defaultOpen>
+                              <CollapsibleTrigger className="flex items-center justify-between w-full">
+                                <h3 className="font-medium">Vehicle</h3>
+                                <ChevronDown className="h-4 w-4" />
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="pt-4 space-y-4">
+                                <div className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id="mobile-vehicle-needed"
+                                    checked={filters.vehicle.needed}
+                                    onCheckedChange={(checked) =>
+                                      setFilters({
+                                        ...filters,
+                                        vehicle: { ...filters.vehicle, needed: checked as boolean },
+                                      })
+                                    }
+                                  />
+                                  <Label htmlFor="mobile-vehicle-needed">Vehicle Needed</Label>
+                                </div>
+                                {filters.vehicle.needed && (
+                                  <RadioGroup
+                                    value={filters.vehicle.type}
+                                    onValueChange={(value) =>
+                                      setFilters({
+                                        ...filters,
+                                        vehicle: { ...filters.vehicle, type: value },
+                                      })
+                                    }
+                                  >
+                                    <div className="flex items-center space-x-2">
+                                      <RadioGroupItem value="car" id="mobile-car" />
+                                      <Label htmlFor="mobile-car">Car</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <RadioGroupItem value="bike" id="mobile-bike" />
+                                      <Label htmlFor="mobile-bike">Bike</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <RadioGroupItem value="van" id="mobile-van" />
+                                      <Label htmlFor="mobile-van">Van</Label>
+                                    </div>
+                                  </RadioGroup>
+                                )}
+                              </CollapsibleContent>
+                            </Collapsible>
+
+                            {/* Interests */}
+                            <Collapsible defaultOpen>
+                              <CollapsibleTrigger className="flex items-center justify-between w-full">
+                                <h3 className="font-medium">Interests</h3>
+                                <ChevronDown className="h-4 w-4" />
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="pt-4 space-y-2">
+                                {["Cultural", "Adventure", "Food", "History", "Nature", "Shopping"].map((interest) => (
+                                  <div key={interest} className="flex items-center space-x-2">
+                                    <Checkbox
+                                      id={`mobile-${interest.toLowerCase()}`}
+                                      checked={filters.interests.includes(interest)}
+                                      onCheckedChange={(checked) => {
+                                        if (checked) {
+                                          setFilters({
+                                            ...filters,
+                                            interests: [...filters.interests, interest],
+                                          });
+                                        } else {
+                                          setFilters({
+                                            ...filters,
+                                            interests: filters.interests.filter((i) => i !== interest),
+                                          });
+                                        }
+                                      }}
+                                    />
+                                    <Label htmlFor={`mobile-${interest.toLowerCase()}`}>{interest}</Label>
+                                  </div>
+                                ))}
+                              </CollapsibleContent>
+                            </Collapsible>
+
+                            {/* Apply Filter Button */}
+                            <Button 
+                              className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90"
+                              onClick={() => {
+                                console.log("Filtering with:", filters);
+                              }}
+                            >
+                              Apply Filters
+                            </Button>
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+
+                      <InteractiveMap filters={filters} />
+                    </div>
+
+                    {/* Filter Sidebar - Right side on desktop, hidden on mobile */}
+                    <Card className="p-6 space-y-6 sticky top-[120px] lg:col-span-1 hidden lg:block">
                       <div className="flex items-center justify-between">
                         <h2 className="text-xl font-semibold flex items-center gap-2">
                           <Sparkles className="h-5 w-5 text-primary" />
@@ -114,100 +282,129 @@ const Index = () => {
                       {/* Time Filter */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <Label className="text-base font-medium flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
-                            Duration
-                          </Label>
+                          <h3 className="font-medium">Time of Day</h3>
                           <ChevronDown className="h-4 w-4" />
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 space-y-2">
-                          <RadioGroup value={filters.time} onValueChange={(value) => setFilters(prev => ({ ...prev, time: value }))}>
-                            {timeOptions.map((option) => (
-                              <div key={option} className="flex items-center space-x-2">
-                                <RadioGroupItem value={option} id={`time-${option}`} />
-                                <Label htmlFor={`time-${option}`} className="font-normal cursor-pointer">{option}</Label>
-                              </div>
-                            ))}
+                        <CollapsibleContent className="pt-4">
+                          <RadioGroup value={filters.time} onValueChange={(value) => setFilters({ ...filters, time: value })}>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="morning" id="morning" />
+                              <Label htmlFor="morning">Morning</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="afternoon" id="afternoon" />
+                              <Label htmlFor="afternoon">Afternoon</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="evening" id="evening" />
+                              <Label htmlFor="evening">Evening</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="any" id="any-time" />
+                              <Label htmlFor="any-time">Any Time</Label>
+                            </div>
                           </RadioGroup>
                         </CollapsibleContent>
                       </Collapsible>
 
-                      {/* Stay Filter */}
+                      {/* Stay Duration */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <Label className="text-base font-medium flex items-center gap-2">
-                            <Home className="h-4 w-4" />
-                            Accommodation
-                          </Label>
+                          <h3 className="font-medium">Length of Stay</h3>
                           <ChevronDown className="h-4 w-4" />
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 space-y-2">
-                          <RadioGroup value={filters.stay} onValueChange={(value) => setFilters(prev => ({ ...prev, stay: value }))}>
-                            {stayOptions.map((option) => (
-                              <div key={option} className="flex items-center space-x-2">
-                                <RadioGroupItem value={option} id={`stay-${option}`} />
-                                <Label htmlFor={`stay-${option}`} className="font-normal cursor-pointer">{option}</Label>
-                              </div>
-                            ))}
+                        <CollapsibleContent className="pt-4">
+                          <RadioGroup value={filters.stay} onValueChange={(value) => setFilters({ ...filters, stay: value })}>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="1-3" id="1-3" />
+                              <Label htmlFor="1-3">1-3 days</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="4-7" id="4-7" />
+                              <Label htmlFor="4-7">4-7 days</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="7+" id="7plus" />
+                              <Label htmlFor="7plus">7+ days</Label>
+                            </div>
                           </RadioGroup>
                         </CollapsibleContent>
                       </Collapsible>
 
-                      {/* Vehicle Filter */}
+                      {/* Vehicle */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <Label className="text-base font-medium flex items-center gap-2">
-                            <Car className="h-4 w-4" />
-                            Vehicle
-                          </Label>
+                          <h3 className="font-medium">Vehicle</h3>
                           <ChevronDown className="h-4 w-4" />
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 space-y-3">
+                        <CollapsibleContent className="pt-4 space-y-4">
                           <div className="flex items-center space-x-2">
-                            <Checkbox 
-                              id="vehicle-needed" 
+                            <Checkbox
+                              id="vehicle-needed"
                               checked={filters.vehicle.needed}
-                              onCheckedChange={(checked) => 
-                                setFilters(prev => ({ ...prev, vehicle: { ...prev.vehicle, needed: checked as boolean } }))
+                              onCheckedChange={(checked) =>
+                                setFilters({
+                                  ...filters,
+                                  vehicle: { ...filters.vehicle, needed: checked as boolean },
+                                })
                               }
                             />
-                            <Label htmlFor="vehicle-needed" className="font-normal cursor-pointer">Vehicle needed</Label>
+                            <Label htmlFor="vehicle-needed">Vehicle Needed</Label>
                           </div>
                           {filters.vehicle.needed && (
-                            <RadioGroup 
-                              value={filters.vehicle.type} 
-                              onValueChange={(value) => setFilters(prev => ({ ...prev, vehicle: { ...prev.vehicle, type: value } }))}
-                              className="ml-6"
+                            <RadioGroup
+                              value={filters.vehicle.type}
+                              onValueChange={(value) =>
+                                setFilters({
+                                  ...filters,
+                                  vehicle: { ...filters.vehicle, type: value },
+                                })
+                              }
                             >
-                              {vehicleTypes.map((type) => (
-                                <div key={type} className="flex items-center space-x-2">
-                                  <RadioGroupItem value={type} id={`vehicle-${type}`} />
-                                  <Label htmlFor={`vehicle-${type}`} className="font-normal cursor-pointer">{type}</Label>
-                                </div>
-                              ))}
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="car" id="car" />
+                                <Label htmlFor="car">Car</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="bike" id="bike" />
+                                <Label htmlFor="bike">Bike</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="van" id="van" />
+                                <Label htmlFor="van">Van</Label>
+                              </div>
                             </RadioGroup>
                           )}
                         </CollapsibleContent>
                       </Collapsible>
 
-                      {/* Interests Filter */}
+                      {/* Interests */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <Label className="text-base font-medium flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
-                            Interests
-                          </Label>
+                          <h3 className="font-medium">Interests</h3>
                           <ChevronDown className="h-4 w-4" />
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3 space-y-2">
-                          {interestOptions.map((interest) => (
+                        <CollapsibleContent className="pt-4 space-y-2">
+                          {["Cultural", "Adventure", "Food", "History", "Nature", "Shopping"].map((interest) => (
                             <div key={interest} className="flex items-center space-x-2">
-                              <Checkbox 
-                                id={`interest-${interest}`}
+                              <Checkbox
+                                id={interest.toLowerCase()}
                                 checked={filters.interests.includes(interest)}
-                                onCheckedChange={() => handleInterestToggle(interest)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setFilters({
+                                      ...filters,
+                                      interests: [...filters.interests, interest],
+                                    });
+                                  } else {
+                                    setFilters({
+                                      ...filters,
+                                      interests: filters.interests.filter((i) => i !== interest),
+                                    });
+                                  }
+                                }}
                               />
-                              <Label htmlFor={`interest-${interest}`} className="font-normal cursor-pointer">{interest}</Label>
+                              <Label htmlFor={interest.toLowerCase()}>{interest}</Label>
                             </div>
                           ))}
                         </CollapsibleContent>
@@ -218,17 +415,11 @@ const Index = () => {
                         className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90"
                         onClick={() => {
                           console.log("Filtering with:", filters);
-                          // Filter logic will be handled by InteractiveMap
                         }}
                       >
                         Apply Filters
                       </Button>
                     </Card>
-
-                    {/* Map Container */}
-                    <div className="lg:col-span-3">
-                      <InteractiveMap filters={filters} />
-                    </div>
                   </div>
 
                   <div className="text-center mt-8">
