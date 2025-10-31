@@ -42,7 +42,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <nav className="fixed top-0 left-0 right-0 z-[1000] bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -74,7 +74,7 @@ const Index = () => {
       <div className="pt-[73px]">
         <Tabs defaultValue="map" className="w-full">
           {/* Tab Buttons */}
-          <div className="sticky top-[73px] z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+          <div className="sticky top-[73px] z-[900] bg-background/95 backdrop-blur-sm border-b border-border">
             <div className="container mx-auto px-4 py-3">
               <TabsList className="flex items-center justify-center gap-4 bg-transparent">
                 <TabsTrigger value="map" className="text-foreground hover:text-primary transition-colors data-[state=active]:bg-primary/10">
@@ -104,7 +104,7 @@ const Index = () => {
                   {/* Sidebar (25%) + Map (75%) */}
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
                     {/* Map Container - Left side on desktop */}
-                    <div className="lg:col-span-3 relative">
+                    <div className="lg:col-span-3 relative z-0">
                       {/* Mobile/Tablet Filter Button */}
                       <Sheet>
                         <SheetTrigger asChild>
@@ -116,9 +116,9 @@ const Index = () => {
                             Filters
                           </Button>
                         </SheetTrigger>
-                        <SheetContent side="right" className="w-[300px] sm:w-[400px] overflow-y-auto">
+                        <SheetContent side="right" className="w-[300px] sm:w-[400px] overflow-y-auto z-[1100]">
                           <div className="space-y-6 pt-6">
-                            <h2 className="text-xl font-semibold flex items-center gap-2">
+                            <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                               <Sparkles className="h-5 w-5 text-primary" />
                               Filters
                             </h2>
@@ -126,26 +126,26 @@ const Index = () => {
                             {/* Time Filter */}
                             <Collapsible defaultOpen>
                               <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium">Time of Day</h3>
+                                <h3 className="font-medium text-foreground">Time of Day</h3>
                                 <ChevronDown className="h-4 w-4" />
                               </CollapsibleTrigger>
                               <CollapsibleContent className="pt-4">
                                 <RadioGroup value={filters.time} onValueChange={(value) => setFilters({ ...filters, time: value })}>
                                   <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="morning" id="mobile-morning" />
-                                    <Label htmlFor="mobile-morning">Morning</Label>
+                                    <Label htmlFor="mobile-morning" className="text-foreground">Morning</Label>
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="afternoon" id="mobile-afternoon" />
-                                    <Label htmlFor="mobile-afternoon">Afternoon</Label>
+                                    <Label htmlFor="mobile-afternoon" className="text-foreground">Afternoon</Label>
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="evening" id="mobile-evening" />
-                                    <Label htmlFor="mobile-evening">Evening</Label>
+                                    <Label htmlFor="mobile-evening" className="text-foreground">Evening</Label>
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="any" id="mobile-any-time" />
-                                    <Label htmlFor="mobile-any-time">Any Time</Label>
+                                    <Label htmlFor="mobile-any-time" className="text-foreground">Any Time</Label>
                                   </div>
                                 </RadioGroup>
                               </CollapsibleContent>
@@ -154,22 +154,22 @@ const Index = () => {
                             {/* Stay Duration */}
                             <Collapsible defaultOpen>
                               <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium">Length of Stay</h3>
+                                <h3 className="font-medium text-foreground">Length of Stay</h3>
                                 <ChevronDown className="h-4 w-4" />
                               </CollapsibleTrigger>
                               <CollapsibleContent className="pt-4">
                                 <RadioGroup value={filters.stay} onValueChange={(value) => setFilters({ ...filters, stay: value })}>
                                   <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="1-3" id="mobile-1-3" />
-                                    <Label htmlFor="mobile-1-3">1-3 days</Label>
+                                    <Label htmlFor="mobile-1-3" className="text-foreground">1-3 days</Label>
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="4-7" id="mobile-4-7" />
-                                    <Label htmlFor="mobile-4-7">4-7 days</Label>
+                                    <Label htmlFor="mobile-4-7" className="text-foreground">4-7 days</Label>
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="7+" id="mobile-7plus" />
-                                    <Label htmlFor="mobile-7plus">7+ days</Label>
+                                    <Label htmlFor="mobile-7plus" className="text-foreground">7+ days</Label>
                                   </div>
                                 </RadioGroup>
                               </CollapsibleContent>
@@ -178,7 +178,7 @@ const Index = () => {
                             {/* Vehicle */}
                             <Collapsible defaultOpen>
                               <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium">Vehicle</h3>
+                                <h3 className="font-medium text-foreground">Vehicle</h3>
                                 <ChevronDown className="h-4 w-4" />
                               </CollapsibleTrigger>
                               <CollapsibleContent className="pt-4 space-y-4">
@@ -193,7 +193,7 @@ const Index = () => {
                                       })
                                     }
                                   />
-                                  <Label htmlFor="mobile-vehicle-needed">Vehicle Needed</Label>
+                                  <Label htmlFor="mobile-vehicle-needed" className="text-foreground">Vehicle Needed</Label>
                                 </div>
                                 {filters.vehicle.needed && (
                                   <RadioGroup
@@ -207,15 +207,15 @@ const Index = () => {
                                   >
                                     <div className="flex items-center space-x-2">
                                       <RadioGroupItem value="car" id="mobile-car" />
-                                      <Label htmlFor="mobile-car">Car</Label>
+                                      <Label htmlFor="mobile-car" className="text-foreground">Car</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                       <RadioGroupItem value="bike" id="mobile-bike" />
-                                      <Label htmlFor="mobile-bike">Bike</Label>
+                                      <Label htmlFor="mobile-bike" className="text-foreground">Bike</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                       <RadioGroupItem value="van" id="mobile-van" />
-                                      <Label htmlFor="mobile-van">Van</Label>
+                                      <Label htmlFor="mobile-van" className="text-foreground">Van</Label>
                                     </div>
                                   </RadioGroup>
                                 )}
@@ -225,7 +225,7 @@ const Index = () => {
                             {/* Interests */}
                             <Collapsible defaultOpen>
                               <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium">Interests</h3>
+                                <h3 className="font-medium text-foreground">Interests</h3>
                                 <ChevronDown className="h-4 w-4" />
                               </CollapsibleTrigger>
                               <CollapsibleContent className="pt-4 space-y-2">
@@ -248,7 +248,7 @@ const Index = () => {
                                         }
                                       }}
                                     />
-                                    <Label htmlFor={`mobile-${interest.toLowerCase()}`}>{interest}</Label>
+                                    <Label htmlFor={`mobile-${interest.toLowerCase()}`} className="text-foreground">{interest}</Label>
                                   </div>
                                 ))}
                               </CollapsibleContent>
@@ -273,7 +273,7 @@ const Index = () => {
                     {/* Filter Sidebar - Right side on desktop, hidden on mobile */}
                     <Card className="p-6 space-y-6 sticky top-[120px] lg:col-span-1 hidden lg:block">
                       <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                        <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
                           <Sparkles className="h-5 w-5 text-primary" />
                           Filters
                         </h2>
@@ -282,26 +282,26 @@ const Index = () => {
                       {/* Time Filter */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium">Time of Day</h3>
+                          <h3 className="font-medium text-foreground">Time of Day</h3>
                           <ChevronDown className="h-4 w-4" />
                         </CollapsibleTrigger>
                         <CollapsibleContent className="pt-4">
                           <RadioGroup value={filters.time} onValueChange={(value) => setFilters({ ...filters, time: value })}>
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value="morning" id="morning" />
-                              <Label htmlFor="morning">Morning</Label>
+                              <Label htmlFor="morning" className="text-foreground">Morning</Label>
                             </div>
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value="afternoon" id="afternoon" />
-                              <Label htmlFor="afternoon">Afternoon</Label>
+                              <Label htmlFor="afternoon" className="text-foreground">Afternoon</Label>
                             </div>
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value="evening" id="evening" />
-                              <Label htmlFor="evening">Evening</Label>
+                              <Label htmlFor="evening" className="text-foreground">Evening</Label>
                             </div>
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value="any" id="any-time" />
-                              <Label htmlFor="any-time">Any Time</Label>
+                              <Label htmlFor="any-time" className="text-foreground">Any Time</Label>
                             </div>
                           </RadioGroup>
                         </CollapsibleContent>
@@ -310,22 +310,22 @@ const Index = () => {
                       {/* Stay Duration */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium">Length of Stay</h3>
+                          <h3 className="font-medium text-foreground">Length of Stay</h3>
                           <ChevronDown className="h-4 w-4" />
                         </CollapsibleTrigger>
                         <CollapsibleContent className="pt-4">
                           <RadioGroup value={filters.stay} onValueChange={(value) => setFilters({ ...filters, stay: value })}>
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value="1-3" id="1-3" />
-                              <Label htmlFor="1-3">1-3 days</Label>
+                              <Label htmlFor="1-3" className="text-foreground">1-3 days</Label>
                             </div>
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value="4-7" id="4-7" />
-                              <Label htmlFor="4-7">4-7 days</Label>
+                              <Label htmlFor="4-7" className="text-foreground">4-7 days</Label>
                             </div>
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem value="7+" id="7plus" />
-                              <Label htmlFor="7plus">7+ days</Label>
+                              <Label htmlFor="7plus" className="text-foreground">7+ days</Label>
                             </div>
                           </RadioGroup>
                         </CollapsibleContent>
@@ -334,7 +334,7 @@ const Index = () => {
                       {/* Vehicle */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium">Vehicle</h3>
+                          <h3 className="font-medium text-foreground">Vehicle</h3>
                           <ChevronDown className="h-4 w-4" />
                         </CollapsibleTrigger>
                         <CollapsibleContent className="pt-4 space-y-4">
@@ -349,7 +349,7 @@ const Index = () => {
                                 })
                               }
                             />
-                            <Label htmlFor="vehicle-needed">Vehicle Needed</Label>
+                            <Label htmlFor="vehicle-needed" className="text-foreground">Vehicle Needed</Label>
                           </div>
                           {filters.vehicle.needed && (
                             <RadioGroup
@@ -363,15 +363,15 @@ const Index = () => {
                             >
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="car" id="car" />
-                                <Label htmlFor="car">Car</Label>
+                                <Label htmlFor="car" className="text-foreground">Car</Label>
                               </div>
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="bike" id="bike" />
-                                <Label htmlFor="bike">Bike</Label>
+                                <Label htmlFor="bike" className="text-foreground">Bike</Label>
                               </div>
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="van" id="van" />
-                                <Label htmlFor="van">Van</Label>
+                                <Label htmlFor="van" className="text-foreground">Van</Label>
                               </div>
                             </RadioGroup>
                           )}
@@ -381,7 +381,7 @@ const Index = () => {
                       {/* Interests */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium">Interests</h3>
+                          <h3 className="font-medium text-foreground">Interests</h3>
                           <ChevronDown className="h-4 w-4" />
                         </CollapsibleTrigger>
                         <CollapsibleContent className="pt-4 space-y-2">
@@ -404,7 +404,7 @@ const Index = () => {
                                   }
                                 }}
                               />
-                              <Label htmlFor={interest.toLowerCase()}>{interest}</Label>
+                              <Label htmlFor={interest.toLowerCase()} className="text-foreground">{interest}</Label>
                             </div>
                           ))}
                         </CollapsibleContent>
