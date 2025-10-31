@@ -183,11 +183,11 @@ const Events = () => {
                             size="lg"
                             onClick={(e) => {
                               e.stopPropagation();
-                              // Navigate to travel buddy booking
-                              window.location.href = '/travel-buddy';
+                              // Navigate to trips page
+                              window.location.href = '/trips';
                             }}
                           >
-                            Book a Travel Buddy for This Event
+                            Book Guide for This Event
                           </Button>
                         </CollapsibleContent>
                       </CardContent>

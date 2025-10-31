@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from 'lucide-react';
+import traveloneLogo from '@/assets/travelone-logo.png';
 
 const Footer = () => {
   return (
@@ -6,7 +7,10 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-xl font-semibold mb-4">Nepal Travel Guide</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <img src={traveloneLogo} alt="Travelone Logo" className="h-8 w-8" />
+              <h3 className="text-xl font-semibold">Travelone</h3>
+            </div>
             <p className="text-sm text-white/80">
               Your trusted companion for exploring the beauty and culture of Nepal.
               Connect with local guides and discover hidden gems.
@@ -26,7 +30,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                <span>info@nepaltravelguide.com</span>
+                <span>info@travelone.com</span>
               </div>
             </div>
           </div>
@@ -48,7 +52,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-white/20 mt-8 pt-6 text-center text-sm text-white/80">
-          <p>&copy; {new Date().getFullYear()} Nepal Travel Guide. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Travelone. All rights reserved.</p>
         </div>
       </div>
     </footer>
