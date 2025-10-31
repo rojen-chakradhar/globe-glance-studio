@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, MapPin, Star, Phone } from 'lucide-react';
@@ -17,60 +17,68 @@ interface Guide {
 
 const InteractiveMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState('');
+  const map = useRef<L.Map | null>(null);
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const markersRef = useRef<L.Marker[]>([]);
 
-  // Mock guide data - in production, this would come from a database
+  // Mock guide data
   const guides: Guide[] = [
-    { id: 1, name: 'Ramesh Sharma', location: [85.324, 27.7172], rating: 4.8, languages: ['English', 'Hindi', 'Nepali'], available: true, specialty: 'Cultural Tours' },
-    { id: 2, name: 'Sita Gurung', location: [85.340, 27.7100], rating: 4.9, languages: ['English', 'Nepali', 'Japanese'], available: true, specialty: 'Mountain Trekking' },
-    { id: 3, name: 'Krishna Thapa', location: [85.310, 27.7200], rating: 4.7, languages: ['English', 'Nepali', 'French'], available: false, specialty: 'Historical Sites' },
-    { id: 4, name: 'Maya Rai', location: [85.360, 27.7150], rating: 5.0, languages: ['English', 'Nepali', 'German'], available: true, specialty: 'Food & Culture' },
-    { id: 5, name: 'Bikash Lama', location: [85.295, 27.7180], rating: 4.6, languages: ['English', 'Nepali', 'Chinese'], available: true, specialty: 'Adventure Tours' },
+    { id: 1, name: 'Ramesh Sharma', location: [27.7172, 85.324], rating: 4.8, languages: ['English', 'Hindi', 'Nepali'], available: true, specialty: 'Cultural Tours' },
+    { id: 2, name: 'Sita Gurung', location: [27.7100, 85.340], rating: 4.9, languages: ['English', 'Nepali', 'Japanese'], available: true, specialty: 'Mountain Trekking' },
+    { id: 3, name: 'Krishna Thapa', location: [27.7200, 85.310], rating: 4.7, languages: ['English', 'Nepali', 'French'], available: false, specialty: 'Historical Sites' },
+    { id: 4, name: 'Maya Rai', location: [27.7150, 85.360], rating: 5.0, languages: ['English', 'Nepali', 'German'], available: true, specialty: 'Food & Culture' },
+    { id: 5, name: 'Bikash Lama', location: [27.7180, 85.295], rating: 4.6, languages: ['English', 'Nepali', 'Chinese'], available: true, specialty: 'Adventure Tours' },
   ];
 
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken) return;
+    if (!mapContainer.current) return;
 
-    mapboxgl.accessToken = mapboxToken;
+    // Initialize map
+    map.current = L.map(mapContainer.current).setView([27.7172, 85.324], 13);
 
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [85.324, 27.7172], // Kathmandu, Nepal
-      zoom: 13,
-    });
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(map.current);
 
-    map.current.addControl(new mapboxgl.NavigationControl());
+    // Create custom icon HTML
+    const createGuideIcon = (available: boolean) => {
+      return L.divIcon({
+        className: 'custom-marker',
+        html: `
+          <div style="
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: ${available ? '#10b981' : '#6b7280'};
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+          ">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        `,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+      });
+    };
 
     // Add guide markers
     guides.forEach((guide) => {
-      const el = document.createElement('div');
-      el.className = 'guide-marker';
-      el.style.width = '40px';
-      el.style.height = '40px';
-      el.style.borderRadius = '50%';
-      el.style.backgroundColor = guide.available ? '#10b981' : '#6b7280';
-      el.style.border = '3px solid white';
-      el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
-      el.style.cursor = 'pointer';
-      el.style.display = 'flex';
-      el.style.alignItems = 'center';
-      el.style.justifyContent = 'center';
-      el.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+      const marker = L.marker(guide.location, {
+        icon: createGuideIcon(guide.available),
+      }).addTo(map.current!);
 
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat(guide.location)
-        .addTo(map.current!);
-
-      el.addEventListener('click', () => {
+      marker.on('click', () => {
         setSelectedGuide(guide);
-        map.current?.flyTo({
-          center: guide.location,
-          zoom: 15,
-          duration: 1000,
+        map.current?.flyTo(guide.location, 15, {
+          duration: 1,
         });
       });
 
@@ -81,7 +89,7 @@ const InteractiveMap = () => {
       markersRef.current.forEach(marker => marker.remove());
       map.current?.remove();
     };
-  }, [mapboxToken]);
+  }, []);
 
   const handleRequestGuide = (guide: Guide) => {
     alert(`Request sent to ${guide.name}! They will contact you shortly.`);
@@ -90,35 +98,8 @@ const InteractiveMap = () => {
 
   return (
     <div className="relative w-full h-[600px] rounded-lg overflow-hidden">
-      {!mapboxToken ? (
-        <Card className="absolute inset-0 flex items-center justify-center p-6 z-10 bg-background/95">
-          <div className="max-w-md text-center space-y-4">
-            <h3 className="text-lg font-semibold">Enter Mapbox Token</h3>
-            <p className="text-sm text-muted-foreground">
-              To use the live guide tracking map, please enter your Mapbox public token.
-              Get one at{' '}
-              <a
-                href="https://mapbox.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                mapbox.com
-              </a>
-            </p>
-            <input
-              type="text"
-              placeholder="pk.eyJ1..."
-              value={mapboxToken}
-              onChange={(e) => setMapboxToken(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-            />
-          </div>
-        </Card>
-      ) : null}
-
       {selectedGuide && (
-        <Card className="absolute top-4 left-4 z-10 p-4 max-w-sm bg-background/95 backdrop-blur">
+        <Card className="absolute top-4 left-4 z-[1000] p-4 max-w-sm bg-background/95 backdrop-blur">
           <div className="space-y-3">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">

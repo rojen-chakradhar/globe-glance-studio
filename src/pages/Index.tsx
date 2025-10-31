@@ -7,6 +7,7 @@ import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock
 import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
@@ -75,6 +76,43 @@ const Index = () => {
                     <p className="text-sm text-muted-foreground mb-4">
                       All guides are licensed and certified by Nepal Tourism Board
                     </p>
+                  </div>
+                </div>
+
+                {/* About Us Section */}
+                <div className="container mx-auto mt-16 px-4">
+                  <div className="max-w-4xl mx-auto bg-card rounded-lg p-8 shadow-md">
+                    <h2 className="text-3xl font-bold text-center mb-6">About Us</h2>
+                    <div className="space-y-4 text-muted-foreground">
+                      <p>
+                        Welcome to Nepal Travel Guide - your premier platform for discovering the wonders of Nepal with certified local guides. 
+                        We connect travelers from around the world with experienced, licensed guides who know Nepal's hidden gems and cultural treasures.
+                      </p>
+                      <p>
+                        Founded by a team of travel enthusiasts and technology experts, our mission is to make Nepal more accessible 
+                        to tourists while supporting local guide communities. Every guide on our platform is certified by the Nepal Tourism Board 
+                        and has undergone rigorous training in safety, cultural sensitivity, and hospitality.
+                      </p>
+                      <p>
+                        Whether you're looking to trek the Himalayas, explore ancient temples, taste authentic Nepali cuisine, or experience 
+                        the vibrant culture of Kathmandu, our guides are here to make your journey unforgettable. With real-time tracking, 
+                        multilingual support, and 24/7 customer service, we ensure your safety and satisfaction throughout your adventure.
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-primary mb-2">500+</div>
+                          <div className="text-sm">Certified Guides</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-primary mb-2">10,000+</div>
+                          <div className="text-sm">Happy Travelers</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-primary mb-2">4.9★</div>
+                          <div className="text-sm">Average Rating</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -413,6 +451,9 @@ const Index = () => {
 
       {/* Chatbot */}
       <TravelChatbot />
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
