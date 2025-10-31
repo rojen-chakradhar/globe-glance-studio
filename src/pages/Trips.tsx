@@ -118,7 +118,7 @@ const Trips = () => {
       <div className="bg-gradient-ocean shadow-md">
         <nav className="container mx-auto px-4 py-6 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold text-primary-foreground flex items-center gap-2">
-            <img src={traveloneLogo} alt="Travelone Logo" className="h-10 w-10" />
+            <img src={traveloneLogo} alt="Travelone Logo" className="h-10 w-10 logo-footer" />
             Travelone
           </Link>
           <div className="flex gap-6 text-primary-foreground">

@@ -18,7 +18,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <img src={traveloneLogo} alt="Travelone Logo" className="h-8 w-8" />
+              <img src={traveloneLogo} alt="Travelone Logo" className="h-8 w-8 logo-default" />
               <span className="text-xl font-bold text-foreground">Travelone</span>
             </Link>
             <div className="flex items-center gap-4">
