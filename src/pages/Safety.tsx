@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plane, Shield, AlertTriangle, Phone, MapPin, Bell } from "lucide-react";
+import { Plane, Shield, AlertTriangle, Phone, MapPin, Bell, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Safety = () => {
@@ -10,11 +10,9 @@ const Safety = () => {
       <nav className="fixed top-0 left-0 right-0 z-[1000] bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-ocean">
-                <Plane className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Travelone</span>
+            <Link to="/" className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity">
+              <ArrowLeft className="h-5 w-5" />
+              <span className="font-medium">Back to Home</span>
             </Link>
           </div>
         </div>
@@ -32,27 +30,20 @@ const Safety = () => {
           </div>
 
           {/* Emergency Contact */}
-          <Card className="mb-8 border-destructive">
-            <CardHeader className="bg-destructive/10">
-              <CardTitle className="flex items-center gap-2 text-destructive">
-                <AlertTriangle className="h-5 w-5" />
-                Emergency Contact
-              </CardTitle>
-            </CardHeader>
+          <Card className="bg-destructive text-destructive-foreground">
             <CardContent className="pt-6">
-              <p className="mb-4 text-muted-foreground">
-                If you're in immediate danger or need emergency assistance, please contact local authorities first, then reach out to us.
-              </p>
+              <h2 className="text-2xl font-bold mb-4">Emergency Contact</h2>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="destructive" className="flex-1">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call Emergency Hotline
+                <Button className="flex-1 bg-white text-destructive hover:bg-white/90">
+                  <Phone className="mr-2 h-5 w-5" />
+                  Call Nepal Police
                 </Button>
-                <Button variant="outline" className="flex-1">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Share Location
+                <Button variant="secondary" className="flex-1">
+                  <MapPin className="mr-2 h-5 w-5" />
+                  Share My Location
                 </Button>
               </div>
+              <p className="text-sm mt-4 opacity-90">Nepal Police Emergency: 100</p>
             </CardContent>
           </Card>
 

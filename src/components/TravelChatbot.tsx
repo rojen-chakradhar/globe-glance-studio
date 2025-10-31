@@ -10,8 +10,15 @@ interface Message {
   content: string;
 }
 
-const TravelChatbot = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface TravelChatbotProps {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+const TravelChatbot = ({ isOpen: externalIsOpen, onOpenChange }: TravelChatbotProps = {}) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = onOpenChange || setInternalIsOpen;
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

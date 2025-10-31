@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Plane, Bell, Lock, Globe, Eye } from "lucide-react";
+import { Plane, Bell, Lock, Globe, Eye, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Settings = () => {
@@ -12,11 +12,9 @@ const Settings = () => {
       <nav className="fixed top-0 left-0 right-0 z-[1000] bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-ocean">
-                <Plane className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Travelone</span>
+            <Link to="/" className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity">
+              <ArrowLeft className="h-5 w-5" />
+              <span className="font-medium">Back to Home</span>
             </Link>
           </div>
         </div>

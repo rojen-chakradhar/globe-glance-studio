@@ -1,22 +1,26 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plane, HelpCircle, Mail, MessageCircle, Phone } from "lucide-react";
+import { Plane, HelpCircle, Mail, MessageCircle, Phone, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import TravelChatbot from "@/components/TravelChatbot";
 
 const Support = () => {
+  const [chatOpen, setChatOpen] = useState(false);
+
   return (
+    <>
+      <TravelChatbot isOpen={chatOpen} onOpenChange={setChatOpen} />
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-[1000] bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-ocean">
-                <Plane className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Travelone</span>
+            <Link to="/" className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity">
+              <ArrowLeft className="h-5 w-5" />
+              <span className="font-medium">Back to Home</span>
             </Link>
           </div>
         </div>
@@ -48,7 +52,7 @@ const Support = () => {
                 <MessageCircle className="h-12 w-12 mx-auto mb-4 text-primary" />
                 <h3 className="font-semibold mb-2">Live Chat</h3>
                 <p className="text-sm text-muted-foreground mb-4">Available 24/7</p>
-                <Button variant="outline" size="sm">Start Chat</Button>
+                <Button variant="outline" size="sm" onClick={() => setChatOpen(true)}>Start Chat</Button>
               </CardContent>
             </Card>
 
@@ -102,6 +106,7 @@ const Support = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
