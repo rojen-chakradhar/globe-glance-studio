@@ -8,6 +8,11 @@ import Map from "./pages/Map";
 import Trips from "./pages/Trips";
 import Auth from "./pages/Auth";
 import Events from "./pages/Events";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import Support from "./pages/Support";
+import Discounts from "./pages/Discounts";
+import Safety from "./pages/Safety";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +29,11 @@ const App = () => (
           <Route path="/trips" element={<Trips />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/discounts" element={<Discounts />} />
+          <Route path="/safety" element={<Safety />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

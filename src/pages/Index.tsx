@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, Search, CalendarDays, Menu, X } from "lucide-react";
+import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, Search, CalendarDays, Menu, X, User, Settings, HelpCircle, Gift, Shield, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -28,6 +37,26 @@ const Index = () => {
   const [searchLocation, setSearchLocation] = useState("");
   const [showMobileMap, setShowMobileMap] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
 
   const handleLocationSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchLocation.trim()) {
@@ -64,21 +93,81 @@ const Index = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/events">
-                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
-                  Events
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
-                  Login
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button className="bg-gradient-ocean text-primary-foreground hover:opacity-90">
-                  Sign Up
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/events">
+                    <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                      Events
+                    </Button>
+                  </Link>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="rounded-full">
+                        <div className="h-8 w-8 rounded-full bg-gradient-ocean flex items-center justify-center">
+                          <User className="h-4 w-4 text-primary-foreground" />
+                        </div>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 z-[1100] bg-background">
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile" className="cursor-pointer">
+                          <User className="mr-2 h-4 w-4" />
+                          Profile
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/settings" className="cursor-pointer">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/discounts" className="cursor-pointer">
+                          <Gift className="mr-2 h-4 w-4" />
+                          Discounts & Gifts
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/safety" className="cursor-pointer">
+                          <Shield className="mr-2 h-4 w-4" />
+                          Safety
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/support" className="cursor-pointer">
+                          <HelpCircle className="mr-2 h-4 w-4" />
+                          Support
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <>
+                  <Link to="/events">
+                    <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                      Events
+                    </Button>
+                  </Link>
+                  <Link to="/auth">
+                    <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/auth">
+                    <Button className="bg-gradient-ocean text-primary-foreground hover:opacity-90">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -90,21 +179,74 @@ const Index = () => {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] z-[1100]">
                 <div className="flex flex-col gap-4 mt-8">
-                  <Link to="/events" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
-                      Events
-                    </Button>
-                  </Link>
-                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
-                    <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
-                      Sign Up
-                    </Button>
-                  </Link>
+                  {user ? (
+                    <>
+                      <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          <User className="mr-2 h-4 w-4" />
+                          Profile
+                        </Button>
+                      </Link>
+                      <Link to="/events" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          Events
+                        </Button>
+                      </Link>
+                      <Link to="/settings" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                        </Button>
+                      </Link>
+                      <Link to="/discounts" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          <Gift className="mr-2 h-4 w-4" />
+                          Discounts & Gifts
+                        </Button>
+                      </Link>
+                      <Link to="/safety" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          <Shield className="mr-2 h-4 w-4" />
+                          Safety
+                        </Button>
+                      </Link>
+                      <Link to="/support" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          <HelpCircle className="mr-2 h-4 w-4" />
+                          Support
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-foreground hover:text-primary transition-colors"
+                        onClick={() => {
+                          handleLogout();
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/events" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          Events
+                        </Button>
+                      </Link>
+                      <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          Login
+                        </Button>
+                      </Link>
+                      <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                        <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
+                          Sign Up
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
