@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
-import traveloneLogo from "@/assets/travelone-logo.png";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -57,7 +56,9 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <img src={traveloneLogo} alt="Travelone Logo" className="h-8 w-8 logo-default" />
+              <div className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-ocean">
+                <Plane className="h-5 w-5 text-primary-foreground" />
+              </div>
               <span className="text-xl font-bold text-foreground">Travelone</span>
             </Link>
             
