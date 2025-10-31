@@ -66,15 +66,21 @@ const Index = () => {
               <span className="text-xl font-bold text-foreground">Wanderlust</span>
             </Link>
             <div className="hidden md:flex items-center gap-8">
-              <a href="#destinations" className="text-foreground hover:text-primary transition-colors">
-                Destinations
-              </a>
-              <a href="#packages" className="text-foreground hover:text-primary transition-colors">
-                Packages
-              </a>
-              <a href="#about" className="text-foreground hover:text-primary transition-colors">
-                About
-              </a>
+              <Link to="/map">
+                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                  Map
+                </Button>
+              </Link>
+              <Link to="/travelbuddy">
+                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                  TravelBuddy
+                </Button>
+              </Link>
+              <Link to="/trips">
+                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                  Trips
+                </Button>
+              </Link>
               <Button className="bg-gradient-ocean text-primary-foreground hover:opacity-90">
                 Book Now
               </Button>
