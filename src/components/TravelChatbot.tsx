@@ -112,7 +112,7 @@ const TravelChatbot = () => {
       {/* Floating Chat Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-[60] h-14 w-14 rounded-full shadow-lg bg-gradient-ocean text-primary-foreground hover:opacity-90 transition-all"
+        className="fixed bottom-6 right-6 z-[1200] h-14 w-14 rounded-full shadow-lg bg-gradient-ocean text-primary-foreground hover:opacity-90 transition-all"
         size="icon"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
@@ -120,7 +120,7 @@ const TravelChatbot = () => {
 
       {/* Chat Popup */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-6 z-[60] w-96 h-[500px] shadow-xl flex flex-col">
+        <Card className="fixed bottom-24 right-6 z-[1200] w-96 h-[500px] shadow-xl flex flex-col">
           {/* Header */}
           <div className="bg-gradient-ocean text-primary-foreground p-4 rounded-t-lg">
             <h3 className="font-semibold text-lg flex items-center gap-2">

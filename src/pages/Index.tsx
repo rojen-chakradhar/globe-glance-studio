@@ -1,16 +1,43 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages } from "lucide-react";
+import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
 import traveloneLogo from "@/assets/travelone-logo.png";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const Index = () => {
+  // Map Filters state used in the Map tab (25% sidebar / 75% map)
+  const [filters, setFilters] = useState({
+    time: "",
+    stay: "",
+    vehicle: { needed: false, type: "" },
+    interests: [] as string[],
+  });
+
+  const timeOptions = ["1 hour", "Few hours (2-4)", "Half day", "Full day", "2-3 days", "Week+"];
+  const stayOptions = ["No stay needed", "Homestay", "Hotel", "Hostel", "Resort"];
+  const vehicleTypes = ["Bike/Scooter", "Car", "SUV", "Bus", "Jeep"];
+  const interestOptions = ["Nature", "Culture", "Tradition", "Local areas", "Adventure", "Food", "Religious sites"];
+
+  const handleInterestToggle = (interest: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      interests: prev.interests.includes(interest)
+        ? prev.interests.filter((i) => i !== interest)
+        : [...prev.interests, interest],
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -65,15 +92,132 @@ const Index = () => {
           <TabsContent value="map" className="m-0">
             <section className="py-12 px-4 min-h-screen">
               <div className="container mx-auto">
-                <div className="max-w-6xl mx-auto">
+                <div className="max-w-7xl mx-auto">
                   <div className="mb-6 text-center">
                     <h2 className="text-3xl font-bold mb-2">Live Guide Tracking</h2>
                     <p className="text-muted-foreground">
                       Green markers show available guides. Click on any guide to see their details and request them.
                     </p>
                   </div>
-                  <InteractiveMap />
-                  
+
+                  {/* Sidebar (25%) + Map (75%) */}
+                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                    {/* Filter Sidebar */}
+                    <Card className="p-6 space-y-6 sticky top-[120px] lg:col-span-1">
+                      <h2 className="text-xl font-semibold flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                        Filters
+                      </h2>
+
+                      {/* Time Filter */}
+                      <Collapsible defaultOpen>
+                        <CollapsibleTrigger className="flex items-center justify-between w-full">
+                          <Label className="text-base font-medium flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            Duration
+                          </Label>
+                          <ChevronDown className="h-4 w-4" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-3 space-y-2">
+                          <RadioGroup value={filters.time} onValueChange={(value) => setFilters(prev => ({ ...prev, time: value }))}>
+                            {timeOptions.map((option) => (
+                              <div key={option} className="flex items-center space-x-2">
+                                <RadioGroupItem value={option} id={`time-${option}`} />
+                                <Label htmlFor={`time-${option}`} className="font-normal cursor-pointer">{option}</Label>
+                              </div>
+                            ))}
+                          </RadioGroup>
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Stay Filter */}
+                      <Collapsible defaultOpen>
+                        <CollapsibleTrigger className="flex items-center justify-between w-full">
+                          <Label className="text-base font-medium flex items-center gap-2">
+                            <Home className="h-4 w-4" />
+                            Accommodation
+                          </Label>
+                          <ChevronDown className="h-4 w-4" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-3 space-y-2">
+                          <RadioGroup value={filters.stay} onValueChange={(value) => setFilters(prev => ({ ...prev, stay: value }))}>
+                            {stayOptions.map((option) => (
+                              <div key={option} className="flex items-center space-x-2">
+                                <RadioGroupItem value={option} id={`stay-${option}`} />
+                                <Label htmlFor={`stay-${option}`} className="font-normal cursor-pointer">{option}</Label>
+                              </div>
+                            ))}
+                          </RadioGroup>
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Vehicle Filter */}
+                      <Collapsible defaultOpen>
+                        <CollapsibleTrigger className="flex items-center justify-between w-full">
+                          <Label className="text-base font-medium flex items-center gap-2">
+                            <Car className="h-4 w-4" />
+                            Vehicle
+                          </Label>
+                          <ChevronDown className="h-4 w-4" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-3 space-y-3">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="vehicle-needed" 
+                              checked={filters.vehicle.needed}
+                              onCheckedChange={(checked) => 
+                                setFilters(prev => ({ ...prev, vehicle: { ...prev.vehicle, needed: checked as boolean } }))
+                              }
+                            />
+                            <Label htmlFor="vehicle-needed" className="font-normal cursor-pointer">Vehicle needed</Label>
+                          </div>
+                          {filters.vehicle.needed && (
+                            <RadioGroup 
+                              value={filters.vehicle.type} 
+                              onValueChange={(value) => setFilters(prev => ({ ...prev, vehicle: { ...prev.vehicle, type: value } }))}
+                              className="ml-6"
+                            >
+                              {vehicleTypes.map((type) => (
+                                <div key={type} className="flex items-center space-x-2">
+                                  <RadioGroupItem value={type} id={`vehicle-${type}`} />
+                                  <Label htmlFor={`vehicle-${type}`} className="font-normal cursor-pointer">{type}</Label>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          )}
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Interests Filter */}
+                      <Collapsible defaultOpen>
+                        <CollapsibleTrigger className="flex items-center justify-between w-full">
+                          <Label className="text-base font-medium flex items-center gap-2">
+                            <MapPin className="h-4 w-4" />
+                            Interests
+                          </Label>
+                          <ChevronDown className="h-4 w-4" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-3 space-y-2">
+                          {interestOptions.map((interest) => (
+                            <div key={interest} className="flex items-center space-x-2">
+                              <Checkbox 
+                                id={`interest-${interest}`}
+                                checked={filters.interests.includes(interest)}
+                                onCheckedChange={() => handleInterestToggle(interest)}
+                              />
+                              <Label htmlFor={`interest-${interest}`} className="font-normal cursor-pointer">{interest}</Label>
+                            </div>
+                          ))}
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </Card>
+
+                    {/* Map Container */}
+                    <div className="lg:col-span-3">
+                      <InteractiveMap />
+                    </div>
+                  </div>
+
                   <div className="text-center mt-8">
                     <p className="text-sm text-muted-foreground mb-4">
                       All guides are licensed and certified by Nepal Tourism Board
