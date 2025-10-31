@@ -6,9 +6,31 @@ import { Label } from "@/components/ui/label";
 import { Plane, HelpCircle, Mail, MessageCircle, Phone, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import TravelChatbot from "@/components/TravelChatbot";
+import { useToast } from "@/hooks/use-toast";
 
 const Support = () => {
   const [chatOpen, setChatOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const { toast } = useToast();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Clear form
+    setName("");
+    setEmail("");
+    setSubject("");
+    setMessage("");
+    
+    // Show toast
+    toast({
+      title: "Message Received",
+      description: "Thank you for contacting us. We will get back to you shortly.",
+    });
+  };
 
   return (
     <>
@@ -71,21 +93,40 @@ const Support = () => {
               <CardTitle>Send us a Message</CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Name</Label>
-                    <Input id="name" placeholder="Your name" />
+                    <Input 
+                      id="name" 
+                      placeholder="Your name" 
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="your@email.com" />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="your@email.com" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="subject">Subject</Label>
-                  <Input id="subject" placeholder="How can we help?" />
+                  <Input 
+                    id="subject" 
+                    placeholder="How can we help?" 
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -94,10 +135,13 @@ const Support = () => {
                     id="message"
                     className="flex min-h-[150px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     placeholder="Tell us more about your inquiry..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
                   />
                 </div>
 
-                <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
+                <Button type="submit" className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
                   Send Message
                 </Button>
               </form>
