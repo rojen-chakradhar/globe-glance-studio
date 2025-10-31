@@ -17,7 +17,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Plane className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold text-foreground">Wanderlust</span>
+              <span className="text-xl font-bold text-foreground">Nepal Travel Guide</span>
             </Link>
             <div className="flex items-center gap-4">
               <Link to="/auth">
@@ -63,14 +63,18 @@ const Index = () => {
             <section className="py-12 px-4 min-h-screen">
               <div className="container mx-auto">
                 <div className="max-w-6xl mx-auto">
+                  <div className="mb-6 text-center">
+                    <h2 className="text-3xl font-bold mb-2">Live Guide Tracking</h2>
+                    <p className="text-muted-foreground">
+                      Green markers show available guides. Click on any guide to see their details and request them.
+                    </p>
+                  </div>
                   <InteractiveMap />
                   
                   <div className="text-center mt-8">
-                    <Link to="/auth">
-                      <Button size="lg" className="bg-gradient-ocean text-primary-foreground hover:opacity-90 text-lg px-8 py-6">
-                        Need a travel buddy?
-                      </Button>
-                    </Link>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      All guides are licensed and certified by Nepal Tourism Board
+                    </p>
                   </div>
                 </div>
               </div>
@@ -85,9 +89,9 @@ const Index = () => {
                   <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-ocean mb-6">
                     <Users className="h-10 w-10 text-primary-foreground" />
                   </div>
-                  <h1 className="text-4xl md:text-5xl font-bold mb-4">Tourist Guides</h1>
+                  <h1 className="text-4xl md:text-5xl font-bold mb-4">Nepal Tourist Guides</h1>
                   <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Connect with experienced local guides for authentic travel experiences
+                    Connect with certified local guides for an authentic Nepali experience
                   </p>
                 </div>
 
@@ -97,31 +101,31 @@ const Index = () => {
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-16 w-16">
-                          <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" alt="Maria Santos" />
-                          <AvatarFallback>MS</AvatarFallback>
+                          <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ramesh" alt="Ramesh Sharma" />
+                          <AvatarFallback>RS</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <CardTitle className="text-xl mb-1">Maria Santos</CardTitle>
+                          <CardTitle className="text-xl mb-1">Ramesh Sharma</CardTitle>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                             <MapPin className="h-4 w-4" />
-                            <span>Paris, France</span>
+                            <span>Kathmandu, Nepal</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="font-semibold">4.9</span>
-                            <span className="text-sm text-muted-foreground">(127 reviews)</span>
+                            <span className="font-semibold">4.8</span>
+                            <span className="text-sm text-muted-foreground">(143 reviews)</span>
                           </div>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-sm text-muted-foreground">
-                        Expert in art history and French cuisine. 8 years experience showing travelers the hidden gems of Paris.
+                        Cultural heritage expert. Specialized in Kathmandu Valley temples and monasteries.
                       </p>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="secondary" className="flex items-center gap-1">
                           <Languages className="h-3 w-3" />
-                          English, French, Spanish
+                          English, Hindi, Nepali
                         </Badge>
                       </div>
                       <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
@@ -135,31 +139,31 @@ const Index = () => {
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-16 w-16">
-                          <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Kenji Tanaka" />
-                          <AvatarFallback>KT</AvatarFallback>
+                          <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sita" alt="Sita Gurung" />
+                          <AvatarFallback>SG</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <CardTitle className="text-xl mb-1">Kenji Tanaka</CardTitle>
+                          <CardTitle className="text-xl mb-1">Sita Gurung</CardTitle>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                             <MapPin className="h-4 w-4" />
-                            <span>Tokyo, Japan</span>
+                            <span>Pokhara, Nepal</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="font-semibold">5.0</span>
-                            <span className="text-sm text-muted-foreground">(98 reviews)</span>
+                            <span className="font-semibold">4.9</span>
+                            <span className="text-sm text-muted-foreground">(167 reviews)</span>
                           </div>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-sm text-muted-foreground">
-                        Specializing in traditional Japanese culture and modern Tokyo. Certified tour guide with 10+ years experience.
+                        Mountain trekking specialist. 15+ years experience guiding Annapurna trails.
                       </p>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="secondary" className="flex items-center gap-1">
                           <Languages className="h-3 w-3" />
-                          English, Japanese, Mandarin
+                          English, Nepali, Japanese
                         </Badge>
                       </div>
                       <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
@@ -173,31 +177,31 @@ const Index = () => {
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-16 w-16">
-                          <AvatarImage src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" alt="Sofia Rodriguez" />
-                          <AvatarFallback>SR</AvatarFallback>
+                          <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Krishna" alt="Krishna Thapa" />
+                          <AvatarFallback>KT</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <CardTitle className="text-xl mb-1">Sofia Rodriguez</CardTitle>
+                          <CardTitle className="text-xl mb-1">Krishna Thapa</CardTitle>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                             <MapPin className="h-4 w-4" />
-                            <span>Barcelona, Spain</span>
+                            <span>Bhaktapur, Nepal</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="font-semibold">4.8</span>
-                            <span className="text-sm text-muted-foreground">(156 reviews)</span>
+                            <span className="font-semibold">4.7</span>
+                            <span className="text-sm text-muted-foreground">(89 reviews)</span>
                           </div>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-sm text-muted-foreground">
-                        Architecture enthusiast and food lover. I'll show you the best tapas bars and Gaudí's masterpieces.
+                        Medieval architecture enthusiast. Expert in Newari culture and traditions.
                       </p>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="secondary" className="flex items-center gap-1">
                           <Languages className="h-3 w-3" />
-                          English, Spanish, Catalan
+                          English, Nepali, French
                         </Badge>
                       </div>
                       <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
@@ -211,31 +215,31 @@ const Index = () => {
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-16 w-16">
-                          <AvatarImage src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" alt="Marco Rossi" />
+                          <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maya" alt="Maya Rai" />
                           <AvatarFallback>MR</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <CardTitle className="text-xl mb-1">Marco Rossi</CardTitle>
+                          <CardTitle className="text-xl mb-1">Maya Rai</CardTitle>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                             <MapPin className="h-4 w-4" />
-                            <span>Rome, Italy</span>
+                            <span>Kathmandu, Nepal</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="font-semibold">4.9</span>
-                            <span className="text-sm text-muted-foreground">(203 reviews)</span>
+                            <span className="font-semibold">5.0</span>
+                            <span className="text-sm text-muted-foreground">(201 reviews)</span>
                           </div>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-sm text-muted-foreground">
-                        History professor and Rome native. Let me take you through 2000 years of fascinating Roman history.
+                        Food and culture specialist. Authentic Nepali cuisine and cooking class tours.
                       </p>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="secondary" className="flex items-center gap-1">
                           <Languages className="h-3 w-3" />
-                          English, Italian, German
+                          English, Nepali, German
                         </Badge>
                       </div>
                       <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
@@ -249,31 +253,31 @@ const Index = () => {
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-16 w-16">
-                          <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Emma Wilson" />
-                          <AvatarFallback>EW</AvatarFallback>
+                          <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bikash" alt="Bikash Lama" />
+                          <AvatarFallback>BL</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <CardTitle className="text-xl mb-1">Emma Wilson</CardTitle>
+                          <CardTitle className="text-xl mb-1">Bikash Lama</CardTitle>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                             <MapPin className="h-4 w-4" />
-                            <span>London, UK</span>
+                            <span>Chitwan, Nepal</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="font-semibold">4.7</span>
-                            <span className="text-sm text-muted-foreground">(89 reviews)</span>
+                            <span className="font-semibold">4.6</span>
+                            <span className="text-sm text-muted-foreground">(76 reviews)</span>
                           </div>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-sm text-muted-foreground">
-                        Royal history expert and theater enthusiast. Discover London's rich cultural heritage and West End magic.
+                        Wildlife and nature expert. Specialized in jungle safaris and bird watching.
                       </p>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="secondary" className="flex items-center gap-1">
                           <Languages className="h-3 w-3" />
-                          English, French
+                          English, Nepali, Chinese
                         </Badge>
                       </div>
                       <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
@@ -287,31 +291,31 @@ const Index = () => {
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <Avatar className="h-16 w-16">
-                          <AvatarImage src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop" alt="Ahmed Hassan" />
-                          <AvatarFallback>AH</AvatarFallback>
+                          <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Pasang" alt="Pasang Sherpa" />
+                          <AvatarFallback>PS</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <CardTitle className="text-xl mb-1">Ahmed Hassan</CardTitle>
+                          <CardTitle className="text-xl mb-1">Pasang Sherpa</CardTitle>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                             <MapPin className="h-4 w-4" />
-                            <span>Cairo, Egypt</span>
+                            <span>Lukla, Nepal</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                             <span className="font-semibold">5.0</span>
-                            <span className="text-sm text-muted-foreground">(142 reviews)</span>
+                            <span className="text-sm text-muted-foreground">(234 reviews)</span>
                           </div>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-sm text-muted-foreground">
-                        Egyptologist with 15 years experience. Unlock the mysteries of ancient Egypt and the pyramids.
+                        Everest Base Camp expert. Mountaineering guide with 20+ successful summits.
                       </p>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="secondary" className="flex items-center gap-1">
                           <Languages className="h-3 w-3" />
-                          English, Arabic, French
+                          English, Nepali, Tibetan
                         </Badge>
                       </div>
                       <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">

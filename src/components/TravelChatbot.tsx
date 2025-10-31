@@ -125,9 +125,9 @@ const TravelChatbot = () => {
           <div className="bg-gradient-ocean text-primary-foreground p-4 rounded-t-lg">
             <h3 className="font-semibold text-lg flex items-center gap-2">
               <MessageCircle className="h-5 w-5" />
-              Travel Assistant
+              Nepal Travel Assistant
             </h3>
-            <p className="text-sm opacity-90">Ask me anything in any language</p>
+            <p className="text-sm opacity-90">Ask about Nepal in any language</p>
           </div>
 
           {/* Messages */}
@@ -136,8 +136,8 @@ const TravelChatbot = () => {
               {messages.length === 0 && (
                 <div className="text-center text-muted-foreground text-sm py-8">
                   <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p>Hello! I'm your multilingual travel assistant.</p>
-                  <p className="mt-2">Ask me about destinations, routes, or travel tips!</p>
+                  <p>Namaste! I'm your Nepal travel assistant.</p>
+                  <p className="mt-2">Ask me about Nepal destinations, guides, or travel tips!</p>
                 </div>
               )}
               {messages.map((msg, idx) => (
