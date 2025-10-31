@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Calendar, Users, Plane, Shield, Award, HeadphonesIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-travel.jpg";
 import santoriniImage from "@/assets/destination-santorini.jpg";
 import baliImage from "@/assets/destination-bali.jpg";
@@ -60,10 +61,10 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Plane className="h-6 w-6 text-primary" />
               <span className="text-xl font-bold text-foreground">Wanderlust</span>
-            </div>
+            </Link>
             <div className="hidden md:flex items-center gap-8">
               <a href="#destinations" className="text-foreground hover:text-primary transition-colors">
                 Destinations
