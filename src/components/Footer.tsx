@@ -1,5 +1,4 @@
-import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from 'lucide-react';
-import traveloneLogo from '@/assets/travelone-logo.png';
+import { MapPin, Phone, Mail, Facebook, Instagram, Twitter, Plane } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -8,7 +7,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <img src={traveloneLogo} alt="Travelone Logo" className="h-8 w-8 logo-footer" />
+              <div className="h-8 w-8 flex items-center justify-center rounded-full bg-white/20">
+                <Plane className="h-5 w-5 text-white" />
+              </div>
               <h3 className="text-xl font-semibold">Travelone</h3>
             </div>
             <p className="text-sm text-white/80">

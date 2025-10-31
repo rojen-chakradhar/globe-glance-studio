@@ -26,7 +26,8 @@ const signupSchema = z.object({
 });
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const searchParams = new URLSearchParams(window.location.search);
+  const [isLogin, setIsLogin] = useState(searchParams.get('mode') !== 'signup');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();

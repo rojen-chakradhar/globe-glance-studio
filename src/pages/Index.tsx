@@ -163,7 +163,7 @@ const Index = () => {
                       Login
                     </Button>
                   </Link>
-                  <Link to="/auth">
+                  <Link to="/auth?mode=signup">
                     <Button className="bg-gradient-ocean text-primary-foreground hover:opacity-90">
                       Sign Up
                     </Button>
@@ -242,7 +242,7 @@ const Index = () => {
                           Login
                         </Button>
                       </Link>
-                      <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                      <Link to="/auth?mode=signup" onClick={() => setMobileMenuOpen(false)}>
                         <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
                           Sign Up
                         </Button>
