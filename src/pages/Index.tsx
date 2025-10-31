@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, Search, CalendarDays } from "lucide-react";
+import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, Search, CalendarDays, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
@@ -28,6 +28,7 @@ const Index = () => {
   
   const [searchLocation, setSearchLocation] = useState("");
   const [showMobileMap, setShowMobileMap] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLocationSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchLocation.trim()) {
@@ -59,7 +60,9 @@ const Index = () => {
               <img src={traveloneLogo} alt="Travelone Logo" className="h-8 w-8 logo-default" />
               <span className="text-xl font-bold text-foreground">Travelone</span>
             </Link>
-            <div className="flex items-center gap-4">
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-4">
               <Link to="/events">
                 <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
                   Events
@@ -76,6 +79,34 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
+
+            {/* Mobile Menu Button */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] z-[1100]">
+                <div className="flex flex-col gap-4 mt-8">
+                  <Link to="/events" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                      Events
+                    </Button>
+                  </Link>
+                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    <Button className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </nav>
@@ -88,8 +119,8 @@ const Index = () => {
             <div className="container mx-auto px-4 py-3">
               <TabsList className="flex items-center justify-center gap-4 bg-transparent">
                 <TabsTrigger value="map" className="text-foreground hover:text-primary transition-colors data-[state=active]:bg-primary/10">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Map
+                  <Users className="h-4 w-4 mr-2" />
+                  Find Buddies
                 </TabsTrigger>
                 <TabsTrigger value="schedule" className="text-foreground hover:text-primary transition-colors data-[state=active]:bg-primary/10">
                   <CalendarDays className="h-4 w-4 mr-2" />
@@ -149,58 +180,6 @@ const Index = () => {
                               <Sparkles className="h-5 w-5 text-primary" />
                               Filters
                             </h2>
-
-                            {/* Time Filter */}
-                            <Collapsible defaultOpen>
-                              <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium text-foreground">Time of Day</h3>
-                                <ChevronDown className="h-4 w-4" />
-                              </CollapsibleTrigger>
-                              <CollapsibleContent className="pt-4">
-                                <RadioGroup value={filters.time} onValueChange={(value) => setFilters({ ...filters, time: value })}>
-                                  <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="morning" id="mobile-morning" />
-                                    <Label htmlFor="mobile-morning" className="text-foreground">Morning</Label>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="afternoon" id="mobile-afternoon" />
-                                    <Label htmlFor="mobile-afternoon" className="text-foreground">Afternoon</Label>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="evening" id="mobile-evening" />
-                                    <Label htmlFor="mobile-evening" className="text-foreground">Evening</Label>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="any" id="mobile-any-time" />
-                                    <Label htmlFor="mobile-any-time" className="text-foreground">Any Time</Label>
-                                  </div>
-                                </RadioGroup>
-                              </CollapsibleContent>
-                            </Collapsible>
-
-                            {/* Stay Duration */}
-                            <Collapsible defaultOpen>
-                              <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium text-foreground">Length of Stay</h3>
-                                <ChevronDown className="h-4 w-4" />
-                              </CollapsibleTrigger>
-                              <CollapsibleContent className="pt-4">
-                                <RadioGroup value={filters.stay} onValueChange={(value) => setFilters({ ...filters, stay: value })}>
-                                  <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="1-3" id="mobile-1-3" />
-                                    <Label htmlFor="mobile-1-3" className="text-foreground">1-3 days</Label>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="4-7" id="mobile-4-7" />
-                                    <Label htmlFor="mobile-4-7" className="text-foreground">4-7 days</Label>
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="7+" id="mobile-7plus" />
-                                    <Label htmlFor="mobile-7plus" className="text-foreground">7+ days</Label>
-                                  </div>
-                                </RadioGroup>
-                              </CollapsibleContent>
-                            </Collapsible>
 
                             {/* Vehicle */}
                             <Collapsible defaultOpen>
