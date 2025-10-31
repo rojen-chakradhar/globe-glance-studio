@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages } from "lucide-react";
 import { Link } from "react-router-dom";
+import InteractiveMap from "@/components/InteractiveMap";
+import TravelChatbot from "@/components/TravelChatbot";
 
 const Index = () => {
   return (
@@ -61,38 +63,9 @@ const Index = () => {
             <section className="py-12 px-4 min-h-screen">
               <div className="container mx-auto">
                 <div className="max-w-6xl mx-auto">
-                  <div className="relative aspect-video bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-lg shadow-elevated mb-8 overflow-hidden">
-                    {/* Map-like background with markers */}
-                    <div className="absolute inset-0 opacity-20">
-                      <svg className="w-full h-full" viewBox="0 0 800 600">
-                        <path d="M 100 300 Q 200 200 300 300 T 500 300 T 700 300" stroke="currentColor" strokeWidth="2" fill="none" />
-                        <path d="M 150 150 Q 250 100 350 150 T 550 150 T 750 150" stroke="currentColor" strokeWidth="2" fill="none" />
-                        <path d="M 50 450 Q 150 400 250 450 T 450 450 T 650 450" stroke="currentColor" strokeWidth="2" fill="none" />
-                      </svg>
-                    </div>
-                    
-                    {/* Location markers */}
-                    <div className="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2">
-                      <MapPin className="h-8 w-8 text-primary fill-primary animate-pulse" />
-                    </div>
-                    <div className="absolute top-1/3 right-1/3 transform -translate-x-1/2 -translate-y-1/2">
-                      <MapPin className="h-8 w-8 text-primary fill-primary animate-pulse" style={{ animationDelay: '0.5s' }} />
-                    </div>
-                    <div className="absolute bottom-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                      <MapPin className="h-8 w-8 text-primary fill-primary animate-pulse" style={{ animationDelay: '1s' }} />
-                    </div>
-                    
-                    {/* Center overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center bg-background/80 backdrop-blur-sm p-6 rounded-lg">
-                        <Navigation className="h-12 w-12 text-primary mx-auto mb-4" />
-                        <p className="text-foreground text-lg font-semibold">Explore Travel Destinations</p>
-                        <p className="text-muted-foreground text-sm mt-2">Interactive map coming soon</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-center">
+                  <InteractiveMap />
+                  
+                  <div className="text-center mt-8">
                     <Link to="/auth">
                       <Button size="lg" className="bg-gradient-ocean text-primary-foreground hover:opacity-90 text-lg px-8 py-6">
                         Need a travel buddy?
@@ -433,6 +406,9 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Chatbot */}
+      <TravelChatbot />
     </div>
   );
 };
