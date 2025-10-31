@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, Search } from "lucide-react";
+import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, Search, CalendarDays } from "lucide-react";
 import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
@@ -90,6 +90,10 @@ const Index = () => {
                 <TabsTrigger value="map" className="text-foreground hover:text-primary transition-colors data-[state=active]:bg-primary/10">
                   <MapPin className="h-4 w-4 mr-2" />
                   Map
+                </TabsTrigger>
+                <TabsTrigger value="schedule" className="text-foreground hover:text-primary transition-colors data-[state=active]:bg-primary/10">
+                  <CalendarDays className="h-4 w-4 mr-2" />
+                  Schedule
                 </TabsTrigger>
                 <TabsTrigger value="trips" className="text-foreground hover:text-primary transition-colors data-[state=active]:bg-primary/10">
                   <Plane className="h-4 w-4 mr-2" />
@@ -328,58 +332,6 @@ const Index = () => {
                         </h2>
                       </div>
 
-                      {/* Time Filter */}
-                      <Collapsible defaultOpen>
-                        <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium text-foreground">Time of Day</h3>
-                          <ChevronDown className="h-4 w-4" />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="pt-4">
-                          <RadioGroup value={filters.time} onValueChange={(value) => setFilters({ ...filters, time: value })}>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="morning" id="morning" />
-                              <Label htmlFor="morning" className="text-foreground">Morning</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="afternoon" id="afternoon" />
-                              <Label htmlFor="afternoon" className="text-foreground">Afternoon</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="evening" id="evening" />
-                              <Label htmlFor="evening" className="text-foreground">Evening</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="any" id="any-time" />
-                              <Label htmlFor="any-time" className="text-foreground">Any Time</Label>
-                            </div>
-                          </RadioGroup>
-                        </CollapsibleContent>
-                      </Collapsible>
-
-                      {/* Stay Duration */}
-                      <Collapsible defaultOpen>
-                        <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium text-foreground">Length of Stay</h3>
-                          <ChevronDown className="h-4 w-4" />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="pt-4">
-                          <RadioGroup value={filters.stay} onValueChange={(value) => setFilters({ ...filters, stay: value })}>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="1-3" id="1-3" />
-                              <Label htmlFor="1-3" className="text-foreground">1-3 days</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="4-7" id="4-7" />
-                              <Label htmlFor="4-7" className="text-foreground">4-7 days</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="7+" id="7plus" />
-                              <Label htmlFor="7plus" className="text-foreground">7+ days</Label>
-                            </div>
-                          </RadioGroup>
-                        </CollapsibleContent>
-                      </Collapsible>
-
                       {/* Vehicle */}
                       <Collapsible defaultOpen>
                         <CollapsibleTrigger className="flex items-center justify-between w-full">
@@ -514,6 +466,162 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </section>
+          </TabsContent>
+
+          {/* Schedule Tab Content */}
+          <TabsContent value="schedule" className="m-0">
+            <section className="py-12 px-4 min-h-screen">
+              <div className="container mx-auto max-w-4xl">
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-ocean mb-6">
+                    <CalendarDays className="h-10 w-10 text-primary-foreground" />
+                  </div>
+                  <h1 className="text-4xl md:text-5xl font-bold mb-4">Schedule Your Trip</h1>
+                  <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                    Plan your perfect adventure with all the details
+                  </p>
+                </div>
+
+                <Card className="p-8">
+                  <form className="space-y-8">
+                    {/* Trip Dates */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-primary" />
+                        Trip Dates
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="start-date" className="text-foreground">Start Date</Label>
+                          <Input type="date" id="start-date" className="w-full" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="end-date" className="text-foreground">End Date</Label>
+                          <Input type="date" id="end-date" className="w-full" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Time Preferences */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold flex items-center gap-2">
+                        <Clock className="h-5 w-5 text-primary" />
+                        Time Preferences
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="start-time" className="text-foreground">Preferred Start Time</Label>
+                          <Input type="time" id="start-time" className="w-full" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="duration" className="text-foreground">Daily Duration</Label>
+                          <select id="duration" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            <option>Half Day (4-5 hours)</option>
+                            <option>Full Day (8-10 hours)</option>
+                            <option>Extended (10+ hours)</option>
+                            <option>Multi-day</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Travelers */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold flex items-center gap-2">
+                        <Users className="h-5 w-5 text-primary" />
+                        Travelers
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="adults" className="text-foreground">Adults</Label>
+                          <Input type="number" id="adults" min="1" defaultValue="1" className="w-full" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="children" className="text-foreground">Children</Label>
+                          <Input type="number" id="children" min="0" defaultValue="0" className="w-full" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="infants" className="text-foreground">Infants</Label>
+                          <Input type="number" id="infants" min="0" defaultValue="0" className="w-full" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Trip Type */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                        Trip Type
+                      </h3>
+                      <RadioGroup defaultValue="leisure">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-muted/50 cursor-pointer">
+                            <RadioGroupItem value="leisure" id="leisure" />
+                            <Label htmlFor="leisure" className="text-foreground cursor-pointer flex-1">Leisure & Sightseeing</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-muted/50 cursor-pointer">
+                            <RadioGroupItem value="adventure" id="adventure" />
+                            <Label htmlFor="adventure" className="text-foreground cursor-pointer flex-1">Adventure & Sports</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-muted/50 cursor-pointer">
+                            <RadioGroupItem value="cultural" id="cultural" />
+                            <Label htmlFor="cultural" className="text-foreground cursor-pointer flex-1">Cultural & Heritage</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-muted/50 cursor-pointer">
+                            <RadioGroupItem value="relaxation" id="relaxation" />
+                            <Label htmlFor="relaxation" className="text-foreground cursor-pointer flex-1">Relaxation & Wellness</Label>
+                          </div>
+                        </div>
+                      </RadioGroup>
+                    </div>
+
+                    {/* Budget */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold flex items-center gap-2">
+                        <Globe className="h-5 w-5 text-primary" />
+                        Budget Range (per person)
+                      </h3>
+                      <RadioGroup defaultValue="moderate">
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="budget" id="budget" />
+                            <Label htmlFor="budget" className="text-foreground">Budget ($50-$100/day)</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="moderate" id="moderate" />
+                            <Label htmlFor="moderate" className="text-foreground">Moderate ($100-$250/day)</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="luxury" id="luxury" />
+                            <Label htmlFor="luxury" className="text-foreground">Luxury ($250+/day)</Label>
+                          </div>
+                        </div>
+                      </RadioGroup>
+                    </div>
+
+                    {/* Special Requirements */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold flex items-center gap-2">
+                        <MessageCircle className="h-5 w-5 text-primary" />
+                        Special Requirements
+                      </h3>
+                      <textarea 
+                        className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        placeholder="Any dietary restrictions, accessibility needs, or special requests..."
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="flex gap-4 pt-4">
+                      <Button type="submit" className="flex-1 bg-gradient-ocean text-primary-foreground hover:opacity-90 h-12 text-lg">
+                        <Calendar className="h-5 w-5 mr-2" />
+                        Create Schedule
+                      </Button>
+                    </div>
+                  </form>
+                </Card>
               </div>
             </section>
           </TabsContent>
