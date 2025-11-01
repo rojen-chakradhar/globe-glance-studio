@@ -19,7 +19,7 @@ export type Database = {
           created_at: string | null
           destination: string
           duration_hours: number
-          guide_id: string
+          guide_id: string | null
           id: string
           special_requests: string | null
           start_date: string
@@ -33,7 +33,7 @@ export type Database = {
           created_at?: string | null
           destination: string
           duration_hours: number
-          guide_id: string
+          guide_id?: string | null
           id?: string
           special_requests?: string | null
           start_date: string
@@ -47,7 +47,7 @@ export type Database = {
           created_at?: string | null
           destination?: string
           duration_hours?: number
-          guide_id?: string
+          guide_id?: string | null
           id?: string
           special_requests?: string | null
           start_date?: string
