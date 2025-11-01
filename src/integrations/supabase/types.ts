@@ -67,6 +67,44 @@ export type Database = {
           },
         ]
       }
+      guide_interests: {
+        Row: {
+          counter_offer_price: number
+          created_at: string | null
+          guide_id: string
+          id: string
+          message: string | null
+          request_id: string
+          status: string
+        }
+        Insert: {
+          counter_offer_price: number
+          created_at?: string | null
+          guide_id: string
+          id?: string
+          message?: string | null
+          request_id: string
+          status?: string
+        }
+        Update: {
+          counter_offer_price?: number
+          created_at?: string | null
+          guide_id?: string
+          id?: string
+          message?: string | null
+          request_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guide_interests_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "tour_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guide_profiles: {
         Row: {
           availability_status: string | null
@@ -234,6 +272,48 @@ export type Database = {
           },
         ]
       }
+      tour_requests: {
+        Row: {
+          created_at: string | null
+          destination: string
+          id: string
+          offered_price: number
+          requirements: string
+          selected_guide_id: string | null
+          status: Database["public"]["Enums"]["request_status"]
+          tourist_id: string
+          tourist_location_lat: number | null
+          tourist_location_lng: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          destination: string
+          id?: string
+          offered_price: number
+          requirements: string
+          selected_guide_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          tourist_id: string
+          tourist_location_lat?: number | null
+          tourist_location_lng?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          destination?: string
+          id?: string
+          offered_price?: number
+          requirements?: string
+          selected_guide_id?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          tourist_id?: string
+          tourist_location_lat?: number | null
+          tourist_location_lng?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       tours: {
         Row: {
           created_at: string | null
@@ -329,6 +409,7 @@ export type Database = {
     }
     Enums: {
       app_role: "tourist" | "guide" | "admin"
+      request_status: "open" | "in_progress" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -457,6 +538,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["tourist", "guide", "admin"],
+      request_status: ["open", "in_progress", "completed", "cancelled"],
     },
   },
 } as const

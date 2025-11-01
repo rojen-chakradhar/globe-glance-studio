@@ -322,6 +322,10 @@ const GuideDashboard = () => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-4">
+              <Button variant="ghost" size="sm" onClick={(e) => handleNavClick(e, "/guide/requests")}>
+                <MapPin className="h-4 w-4 mr-2" />
+                Buddy Requests
+              </Button>
               <Button variant="ghost" size="sm" onClick={(e) => handleNavClick(e, "/guide/tours")}>
                 <Calendar className="h-4 w-4 mr-2" />
                 My Tours
@@ -354,6 +358,17 @@ const GuideDashboard = () => {
           {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="md:hidden mt-4 space-y-2">
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleNavClick(e, "/guide/requests");
+                }}
+              >
+                <MapPin className="h-4 w-4 mr-2" />
+                Buddy Requests
+              </Button>
               <Button 
                 variant="ghost" 
                 className="w-full justify-start"

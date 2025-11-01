@@ -435,6 +435,17 @@ const Index = () => {
             <div className="hidden md:flex items-center gap-4">
               {user ? (
                 <>
+                  <Link to="/find-buddy">
+                    <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                      <Users className="mr-2 h-4 w-4" />
+                      Find Buddy
+                    </Button>
+                  </Link>
+                  <Link to="/my-requests">
+                    <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                      My Requests
+                    </Button>
+                  </Link>
                   <Link to="/events">
                     <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
                       Events
@@ -530,6 +541,18 @@ const Index = () => {
                         <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
                           <User className="mr-2 h-4 w-4" />
                           Profile
+                        </Button>
+                      </Link>
+                      <Link to="/find-buddy" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          <Users className="mr-2 h-4 w-4" />
+                          Find Buddy
+                        </Button>
+                      </Link>
+                      <Link to="/my-requests" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          <FileText className="mr-2 h-4 w-4" />
+                          My Requests
                         </Button>
                       </Link>
                       <Link to="/events" onClick={() => setMobileMenuOpen(false)}>
