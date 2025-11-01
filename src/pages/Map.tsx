@@ -15,6 +15,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import MapboxBuddyMap from "@/components/MapboxBuddyMap";
 
 const STANDARD_HOURLY_RATE = 50;
 const PRICE_INCREMENT = 5;
@@ -689,7 +690,7 @@ export default function Map() {
 
       {/* Map */}
       <div className="flex-1 relative h-[70vh] md:h-screen min-h-[60vh] order-first md:order-last">
-        <div ref={mapContainer} className="w-full h-full" />
+        <MapboxBuddyMap />
       </div>
     </div>
   );
