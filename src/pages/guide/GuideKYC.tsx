@@ -213,7 +213,7 @@ const GuideKYC = () => {
           verification_status: 'approved',
           verified_at: new Date().toISOString(),
         })
-        .eq('user_id', user.id);
+        .eq('id', kycData.id);
 
       if (approvalError) throw approvalError;
 
