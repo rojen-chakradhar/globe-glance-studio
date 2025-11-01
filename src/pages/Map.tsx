@@ -31,7 +31,7 @@ interface GuideInterest {
 }
 
 export default function Map() {
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency, setCurrency } = useCurrency();
   const navigate = useNavigate();
   const [destination, setDestination] = useState("");
   const [requirements, setRequirements] = useState("");
@@ -317,10 +317,6 @@ export default function Map() {
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       {/* Sidebar */}
       <div className="w-full md:w-96 bg-card border-r border-border overflow-y-auto p-4 space-y-4">
-        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
 
         <Card>
           <CardHeader>
@@ -354,7 +350,28 @@ export default function Map() {
               </div>
 
               <div className="space-y-2">
-                <Label>Your Budget (per day)</Label>
+                <div className="flex items-center justify-between">
+                  <Label>Your Budget (per day)</Label>
+                  {/* Currency Selector */}
+                  <div className="flex items-center gap-1 p-0.5 bg-muted rounded">
+                    <Button
+                      variant={currency === 'NPR' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setCurrency('NPR')}
+                      className="h-6 px-2 text-xs"
+                    >
+                      NPR
+                    </Button>
+                    <Button
+                      variant={currency === 'USD' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => setCurrency('USD')}
+                      className="h-6 px-2 text-xs"
+                    >
+                      USD
+                    </Button>
+                  </div>
+                </div>
                 <div className="flex items-center gap-4">
                   <Button
                     type="button"
@@ -395,10 +412,31 @@ export default function Map() {
         {interestedGuides.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Interested Guides ({interestedGuides.length})
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Interested Guides ({interestedGuides.length})
+                </CardTitle>
+                {/* Currency Selector */}
+                <div className="flex items-center gap-1 p-0.5 bg-muted rounded">
+                  <Button
+                    variant={currency === 'NPR' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setCurrency('NPR')}
+                    className="h-6 px-2 text-xs"
+                  >
+                    NPR
+                  </Button>
+                  <Button
+                    variant={currency === 'USD' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setCurrency('USD')}
+                    className="h-6 px-2 text-xs"
+                  >
+                    USD
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {interestedGuides.map((guide) => (

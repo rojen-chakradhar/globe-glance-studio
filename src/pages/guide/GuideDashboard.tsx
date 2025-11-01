@@ -324,26 +324,6 @@ const GuideDashboard = () => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-4">
-              {/* Currency Selector */}
-              <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
-                <Button
-                  variant={currency === 'NPR' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setCurrency('NPR')}
-                  className="h-8 px-3"
-                >
-                  NPR
-                </Button>
-                <Button
-                  variant={currency === 'USD' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setCurrency('USD')}
-                  className="h-8 px-3"
-                >
-                  USD
-                </Button>
-              </div>
-              
               <Button variant="ghost" size="sm" onClick={(e) => handleNavClick(e, "/guide/requests")}>
                 <MapPin className="h-4 w-4 mr-2" />
                 Buddy Requests
@@ -503,7 +483,28 @@ const GuideDashboard = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium text-foreground">Total Earnings</CardTitle>
-                  <DollarSign className="h-4 w-4 text-primary" />
+                  <div className="flex items-center gap-2">
+                    {/* Currency Selector */}
+                    <div className="flex items-center gap-1 p-0.5 bg-muted rounded">
+                      <Button
+                        variant={currency === 'NPR' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setCurrency('NPR')}
+                        className="h-6 px-2 text-xs"
+                      >
+                        NPR
+                      </Button>
+                      <Button
+                        variant={currency === 'USD' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setCurrency('USD')}
+                        className="h-6 px-2 text-xs"
+                      >
+                        USD
+                      </Button>
+                    </div>
+                    <DollarSign className="h-4 w-4 text-primary" />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-foreground">{formatPrice(stats.totalEarnings)}</div>

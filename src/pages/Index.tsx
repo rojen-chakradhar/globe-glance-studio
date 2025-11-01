@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import Map from "./Map";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
@@ -403,26 +404,6 @@ const Index = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
-              {/* Currency Selector */}
-              <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
-                <Button
-                  variant={currency === 'NPR' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setCurrency('NPR')}
-                  className="h-8 px-3"
-                >
-                  NPR
-                </Button>
-                <Button
-                  variant={currency === 'USD' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setCurrency('USD')}
-                  className="h-8 px-3"
-                >
-                  USD
-                </Button>
-              </div>
-              
             {user ? (
                 <>
               <Link to="/map">
@@ -642,26 +623,7 @@ const Index = () => {
 
           {/* Find Buddies Tab Content */}
           <TabsContent value="map" className="m-0">
-            <section className="py-12 px-4 min-h-screen">
-              <div className="container mx-auto max-w-2xl">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-2xl">Find Buddies</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-muted-foreground">
-                      Use the interactive map to search for nearby guides, see their offers, and choose who to meet.
-                    </p>
-                    <Link to="/map">
-                      <Button className="w-full">
-                        <MapPin className="mr-2 h-4 w-4" />
-                        Find Buddy on Map
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </div>
-            </section>
+            <Map />
           </TabsContent>
 
           {/* Schedule Tab Content */}
