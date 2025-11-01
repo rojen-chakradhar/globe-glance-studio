@@ -310,7 +310,7 @@ const GuideDashboard = () => {
       <nav className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/guide" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.location.reload()}>
               <div className="h-10 w-10 rounded-full bg-gradient-ocean flex items-center justify-center">
                 <Compass className="h-6 w-6 text-primary-foreground" />
               </div>
@@ -318,7 +318,7 @@ const GuideDashboard = () => {
                 <h1 className="text-lg font-bold text-foreground">Travelone Buddies</h1>
                 <p className="text-xs text-muted-foreground">Guide Dashboard</p>
               </div>
-            </Link>
+            </div>
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-4">

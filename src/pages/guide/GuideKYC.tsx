@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Upload } from "lucide-react";
+import { CalendarIcon, Upload, Compass } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -224,6 +224,20 @@ const GuideKYC = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
+        {/* Logo Header */}
+        <div 
+          className="flex items-center gap-2 mb-6 cursor-pointer hover:opacity-80 transition-opacity" 
+          onClick={() => navigate("/guide")}
+        >
+          <div className="h-10 w-10 rounded-full bg-gradient-ocean flex items-center justify-center">
+            <Compass className="h-6 w-6 text-primary-foreground" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-foreground">Travelone Buddies</h1>
+            <p className="text-xs text-muted-foreground">Guide Dashboard</p>
+          </div>
+        </div>
+
         <Card className="p-8">
           <h1 className="text-3xl font-bold mb-2">KYC Verification</h1>
           <p className="text-muted-foreground mb-6">Please complete the verification process to activate your guide account.</p>
