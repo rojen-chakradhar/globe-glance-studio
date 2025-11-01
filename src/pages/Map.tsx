@@ -163,6 +163,11 @@ export default function Map() {
 
     mapInstance.current = map;
     
+    // Ensure Leaflet recalculates size after mount (helps on mobile)
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
+    
     // Add NPC guides around tourist immediately on map load
     setTimeout(() => {
       addNpcGuides(userLat, userLng);
@@ -667,7 +672,7 @@ export default function Map() {
       </div>
 
       {/* Map */}
-      <div className="flex-1 relative h-[65svh] md:h-screen min-h-[360px] order-first md:order-last">
+      <div className="flex-1 relative h-[70svh] md:h-screen min-h-[50vh] order-first md:order-last">
         <div ref={mapContainer} className="w-full h-full" />
       </div>
     </div>
