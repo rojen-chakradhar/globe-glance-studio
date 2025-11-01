@@ -179,24 +179,32 @@ const GuideAuth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-elevated">
-        <CardHeader className="text-center">
-          <Link to="/" className="flex items-center gap-2 justify-center mb-6 hover:opacity-80 transition-opacity">
+    <div className="min-h-screen bg-background">
+      {/* Navbar */}
+      <nav className="bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="container mx-auto px-4 py-4">
+          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-ocean">
               <Compass className="h-6 w-6 text-primary-foreground" />
             </div>
             <span className="text-2xl font-bold text-foreground">Travelone Buddies</span>
           </Link>
-          <CardTitle className="text-2xl">
-            {isLogin ? "Guide Login" : "Become a Guide"}
-          </CardTitle>
-          <CardDescription>
-            {isLogin
-              ? "Welcome back to Travelone Buddies"
-              : "Join our community of local guides"}
-          </CardDescription>
-        </CardHeader>
+        </div>
+      </nav>
+
+      {/* Form */}
+      <div className="flex items-center justify-center p-4 min-h-[calc(100vh-80px)]">
+        <Card className="w-full max-w-md shadow-elevated">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">
+              {isLogin ? "Guide Login" : "Become a Guide"}
+            </CardTitle>
+            <CardDescription>
+              {isLogin
+                ? "Welcome back to Travelone Buddies"
+                : "Join our community of local guides"}
+            </CardDescription>
+          </CardHeader>
 
         <CardContent>
           <form onSubmit={isLogin ? handleLogin : handleSignup} className="space-y-4">
@@ -319,7 +327,8 @@ const GuideAuth = () => {
             </div>
           </form>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };

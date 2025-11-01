@@ -103,11 +103,11 @@ const GuideBookings = () => {
         </div>
 
         <Tabs defaultValue="all" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 max-w-md">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 max-w-full sm:max-w-md h-auto">
+            <TabsTrigger value="all" className="text-xs sm:text-sm">All</TabsTrigger>
+            <TabsTrigger value="pending" className="text-xs sm:text-sm">Pending</TabsTrigger>
+            <TabsTrigger value="confirmed" className="text-xs sm:text-sm">Confirmed</TabsTrigger>
+            <TabsTrigger value="completed" className="text-xs sm:text-sm">Completed</TabsTrigger>
           </TabsList>
 
           <TabsContent value="all" className="space-y-4">
