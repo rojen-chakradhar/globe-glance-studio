@@ -433,12 +433,12 @@ const Index = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
-              {user ? (
+            {user ? (
                 <>
-                  <Link to="/find-buddy">
+                  <Link to="/map">
                     <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
-                      <Users className="mr-2 h-4 w-4" />
-                      Find Buddy
+                      <MapPin className="mr-2 h-4 w-4" />
+                      Find Buddy on Map
                     </Button>
                   </Link>
                   <Link to="/my-requests">

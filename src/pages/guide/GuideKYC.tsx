@@ -206,28 +206,21 @@ const GuideKYC = () => {
 
       if (kycError) throw kycError;
 
+      // Instant auto-approval for testing
+      const { error: approvalError } = await supabase
+        .from("kyc_verifications")
+        .update({
+          verification_status: 'approved',
+          verified_at: new Date().toISOString(),
+        })
+        .eq('user_id', user.id);
+
+      if (approvalError) throw approvalError;
+
       toast({
-        title: "KYC Submitted Successfully",
-        description: "Auto-approving your verification in 3 seconds...",
+        title: "KYC Approved! ✅",
+        description: "Your account has been verified instantly. You can now access all features.",
       });
-
-      // Auto-approve after 3 seconds (temporary for testing)
-      setTimeout(async () => {
-        const { error: approvalError } = await supabase
-          .from("kyc_verifications")
-          .update({
-            verification_status: 'approved',
-            verified_at: new Date().toISOString(),
-          })
-          .eq('user_id', user.id);
-
-        if (!approvalError) {
-          toast({
-            title: "KYC Approved! ✅",
-            description: "Your account has been verified. You can now access all features.",
-          });
-        }
-      }, 3000);
 
       navigate("/guide");
     } catch (error: any) {
