@@ -185,12 +185,9 @@ const GuideKYC = () => {
         );
       }
 
-      // Submit KYC data
-      const { data: kycData, error: kycError } = await supabase
-        .from("kyc_verifications")
-        .insert({
-          user_id: user.id,
-          guide_profile_id: guideProfile.id,
+      // Submit KYC data via secure backend function
+      const { data: result, error: fnError } = await supabase.functions.invoke('submit-kyc', {
+        body: {
           full_government_name: formData.fullGovernmentName,
           date_of_birth: dateOfBirth?.toISOString().split('T')[0],
           gender: formData.gender,
@@ -201,7 +198,7 @@ const GuideKYC = () => {
           driver_license_photo_url: driverLicenseUrl || null,
           qualification: formData.qualification,
           profession: formData.profession,
-          languages: formData.languages.split(',').map(l => l.trim()),
+          languages: formData.languages.split(',').map(l => l.trim()).filter(Boolean),
           experience_description: formData.experienceDescription,
           services_provided: formData.servicesProvided,
           bad_habits: formData.badHabits,
@@ -212,26 +209,14 @@ const GuideKYC = () => {
           emergency_contact_name: formData.emergencyContactName,
           emergency_contact_relation: formData.emergencyContactRelation,
           emergency_contact_phone: formData.emergencyContactPhone,
-        })
-        .select()
-        .single();
+        }
+      });
 
-      if (kycError) throw kycError;
-
-      // Instant auto-approval for testing
-      const { error: approvalError } = await supabase
-        .from("kyc_verifications")
-        .update({
-          verification_status: 'approved',
-          verified_at: new Date().toISOString(),
-        })
-        .eq('id', kycData.id);
-
-      if (approvalError) throw approvalError;
+      if (fnError) throw fnError;
 
       toast({
-        title: "KYC Approved! ✅",
-        description: "Your account has been verified instantly. You can now access all features.",
+        title: "KYC submitted",
+        description: "Your verification is pending review.",
       });
 
       navigate("/guide");
