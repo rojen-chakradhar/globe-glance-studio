@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, User, DollarSign, FileText, MapPin, Users } from "lucide-react";
+import { Calendar, Clock, User, DollarSign, FileText, MapPin, Users, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -20,6 +20,15 @@ const bookingSchema = z.object({
   special_requests: z.string().max(500, "Maximum 500 characters"),
 });
 
+const scheduleSchema = z.object({
+  destination: z.string().min(1, "Destination is required").max(100, "Maximum 100 characters"),
+  start_date: z.string().min(1, "Date is required"),
+  duration_hours: z.number().min(1, "At least 1 hour required").max(72, "Maximum 72 hours"),
+  group_size: z.number().min(1, "At least 1 person required"),
+  budget: z.number().min(0, "Budget must be positive"),
+  special_requests: z.string().max(1000, "Maximum 1000 characters"),
+});
+
 const Trips = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [tours, setTours] = useState<any[]>([]);
@@ -27,6 +36,7 @@ const Trips = () => {
   const [guides, setGuides] = useState<Record<string, any>>({});
   const [selectedTour, setSelectedTour] = useState<any>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -34,6 +44,15 @@ const Trips = () => {
   const [bookingData, setBookingData] = useState({
     start_date: "",
     group_size: 1,
+    special_requests: "",
+  });
+
+  const [scheduleData, setScheduleData] = useState({
+    destination: "",
+    start_date: "",
+    duration_hours: 4,
+    group_size: 1,
+    budget: 0,
     special_requests: "",
   });
 
@@ -180,6 +199,79 @@ const Trips = () => {
     setDialogOpen(true);
   };
 
+  const handleScheduleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to create a schedule request",
+          variant: "destructive",
+        });
+        navigate("/auth");
+        return;
+      }
+
+      scheduleSchema.parse({
+        ...scheduleData,
+        duration_hours: Number(scheduleData.duration_hours),
+        group_size: Number(scheduleData.group_size),
+        budget: Number(scheduleData.budget),
+      });
+
+      // Insert as a booking without tour_id (custom schedule request)
+      const { error } = await supabase
+        .from('bookings')
+        .insert([{
+          tourist_id: session.user.id,
+          guide_id: null, // Will be assigned when a guide accepts
+          tour_id: null, // Custom schedule request
+          destination: scheduleData.destination,
+          start_date: new Date(scheduleData.start_date).toISOString(),
+          duration_hours: scheduleData.duration_hours,
+          total_amount: scheduleData.budget,
+          special_requests: scheduleData.special_requests || null,
+          status: 'pending',
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Schedule request sent!",
+        description: "Guides can now view and accept your custom trip request.",
+      });
+
+      setScheduleDialogOpen(false);
+      setScheduleData({
+        destination: "",
+        start_date: "",
+        duration_hours: 4,
+        group_size: 1,
+        budget: 0,
+        special_requests: "",
+      });
+      checkAuthAndFetchBookings();
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        toast({
+          title: "Failed to create request",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   const filterBookings = (status: string) => {
     if (status === 'all') return bookings;
     return bookings.filter(b => b.status === status);
@@ -296,21 +388,30 @@ const Trips = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">My Trips</h1>
-          <p className="text-muted-foreground">Browse available tours and manage your bookings</p>
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">My Trips</h1>
+            <p className="text-muted-foreground">Browse tours and manage your bookings</p>
+          </div>
+          <Button
+            onClick={() => setScheduleDialogOpen(true)}
+            className="bg-gradient-ocean text-primary-foreground hover:opacity-90"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Request Custom Trip
+          </Button>
         </div>
 
-        <Tabs defaultValue="available" className="space-y-6">
+        <Tabs defaultValue="tours" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 max-w-full sm:max-w-2xl h-auto">
-            <TabsTrigger value="available" className="text-xs sm:text-sm">Available Tours</TabsTrigger>
+            <TabsTrigger value="tours" className="text-xs sm:text-sm">Tours</TabsTrigger>
             <TabsTrigger value="all" className="text-xs sm:text-sm">All Bookings</TabsTrigger>
             <TabsTrigger value="pending" className="text-xs sm:text-sm">Pending</TabsTrigger>
             <TabsTrigger value="confirmed" className="text-xs sm:text-sm">Confirmed</TabsTrigger>
             <TabsTrigger value="completed" className="text-xs sm:text-sm">Completed</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="available" className="space-y-4">
+          <TabsContent value="tours" className="space-y-4">
             {tours.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center text-muted-foreground">
@@ -454,6 +555,110 @@ const Trips = () => {
               </Button>
               <Button type="submit" className="flex-1 bg-gradient-ocean text-primary-foreground hover:opacity-90">
                 Confirm Booking
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Custom Schedule Request Dialog */}
+      <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Request Custom Trip</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleScheduleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="destination">Destination</Label>
+              <Input
+                id="destination"
+                name="destination"
+                value={scheduleData.destination}
+                onChange={(e) => setScheduleData({ ...scheduleData, destination: e.target.value })}
+                placeholder="e.g., Pokhara, Chitwan, Lumbini"
+                required
+              />
+              {errors.destination && <p className="text-sm text-destructive">{errors.destination}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="schedule_start_date">Start Date</Label>
+              <Input
+                id="schedule_start_date"
+                name="start_date"
+                type="date"
+                value={scheduleData.start_date}
+                onChange={(e) => setScheduleData({ ...scheduleData, start_date: e.target.value })}
+                min={new Date().toISOString().split('T')[0]}
+                required
+              />
+              {errors.start_date && <p className="text-sm text-destructive">{errors.start_date}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="duration_hours">Duration (hours)</Label>
+              <Input
+                id="duration_hours"
+                name="duration_hours"
+                type="number"
+                value={scheduleData.duration_hours}
+                onChange={(e) => setScheduleData({ ...scheduleData, duration_hours: parseInt(e.target.value) })}
+                min="1"
+                max="72"
+                required
+              />
+              {errors.duration_hours && <p className="text-sm text-destructive">{errors.duration_hours}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="schedule_group_size">Number of People</Label>
+              <Input
+                id="schedule_group_size"
+                name="group_size"
+                type="number"
+                value={scheduleData.group_size}
+                onChange={(e) => setScheduleData({ ...scheduleData, group_size: parseInt(e.target.value) })}
+                min="1"
+                required
+              />
+              {errors.group_size && <p className="text-sm text-destructive">{errors.group_size}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="budget">Budget (NPR)</Label>
+              <Input
+                id="budget"
+                name="budget"
+                type="number"
+                value={scheduleData.budget}
+                onChange={(e) => setScheduleData({ ...scheduleData, budget: parseFloat(e.target.value) })}
+                min="0"
+                placeholder="Your estimated budget"
+                required
+              />
+              {errors.budget && <p className="text-sm text-destructive">{errors.budget}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="schedule_special_requests">Trip Details & Preferences</Label>
+              <Textarea
+                id="schedule_special_requests"
+                name="special_requests"
+                value={scheduleData.special_requests}
+                onChange={(e) => setScheduleData({ ...scheduleData, special_requests: e.target.value })}
+                placeholder="Describe what you'd like to do, places to visit, preferences..."
+                rows={4}
+                maxLength={1000}
+              />
+              {errors.special_requests && <p className="text-sm text-destructive">{errors.special_requests}</p>}
+            </div>
+
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={() => setScheduleDialogOpen(false)} className="flex-1">
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1 bg-gradient-ocean text-primary-foreground hover:opacity-90">
+                Send Request
               </Button>
             </div>
           </form>
