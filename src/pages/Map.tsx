@@ -84,6 +84,17 @@ export default function Map() {
   }, []);
 
   useEffect(() => {
+    const handler = () => {
+      mapInstance.current?.invalidateSize();
+    };
+    window.addEventListener('resize', handler);
+    window.addEventListener('orientationchange', handler);
+    return () => {
+      window.removeEventListener('resize', handler);
+      window.removeEventListener('orientationchange', handler);
+    };
+  }, []);
+  useEffect(() => {
     if (requestId) {
       fetchInterestedGuides();
       
@@ -167,7 +178,7 @@ export default function Map() {
 
     const npcIcon = L.divIcon({
       className: "custom-marker",
-      html: '<div style="background: #8b5cf6; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: white; border: 2px solid white; box-shadow: 0 2px 8px rgba(139,92,246,0.4); cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>',
+      html: '<div style="background: hsl(var(--accent)); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: white; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer;">\n        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n          <path d="M12 2l2.39 4.85L20 8l-4 3.9L17 18l-5-2.6L7 18l1-6.1L4 8l5.61-1.15L12 2z"/>\n        </svg>\n      </div>',
       iconSize: [36, 36],
     });
 
@@ -656,7 +667,7 @@ export default function Map() {
       </div>
 
       {/* Map */}
-      <div className="flex-1 relative h-[60vh] md:h-screen order-first md:order-last">
+      <div className="flex-1 relative h-[65svh] md:h-screen min-h-[360px] order-first md:order-last">
         <div ref={mapContainer} className="w-full h-full" />
       </div>
     </div>
