@@ -120,16 +120,22 @@ const GuideDashboard = () => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/guide/profile">
+              <Link to="/guide/tours">
                 <Button variant="ghost" size="sm">
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
+                  <Calendar className="h-4 w-4 mr-2" />
+                  My Tours
                 </Button>
               </Link>
               <Link to="/guide/bookings">
                 <Button variant="ghost" size="sm">
                   <Calendar className="h-4 w-4 mr-2" />
                   Bookings
+                </Button>
+              </Link>
+              <Link to="/guide/profile">
+                <Button variant="ghost" size="sm">
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
                 </Button>
               </Link>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
@@ -152,16 +158,22 @@ const GuideDashboard = () => {
           {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="md:hidden mt-4 space-y-2">
-              <Link to="/guide/profile" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/guide/tours" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="ghost" className="w-full justify-start">
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
+                  <Calendar className="h-4 w-4 mr-2" />
+                  My Tours
                 </Button>
               </Link>
               <Link to="/guide/bookings" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="ghost" className="w-full justify-start">
                   <Calendar className="h-4 w-4 mr-2" />
                   Bookings
+                </Button>
+              </Link>
+              <Link to="/guide/profile" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start">
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
                 </Button>
               </Link>
               <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>

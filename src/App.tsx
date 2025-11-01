@@ -14,10 +14,12 @@ import Support from "./pages/Support";
 import Discounts from "./pages/Discounts";
 import Safety from "./pages/Safety";
 import NotFound from "./pages/NotFound";
+import BrowseTours from "./pages/BrowseTours";
 import GuideAuth from "./pages/guide/GuideAuth";
 import GuideDashboard from "./pages/guide/GuideDashboard";
 import GuideBookings from "./pages/guide/GuideBookings";
 import GuideProfile from "./pages/guide/GuideProfile";
+import GuideTours from "./pages/guide/GuideTours";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/map" element={<Map />} />
           <Route path="/trips" element={<Trips />} />
+          <Route path="/tours" element={<BrowseTours />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/events" element={<Events />} />
           <Route path="/profile" element={<Profile />} />
@@ -41,9 +44,10 @@ const App = () => (
           
           {/* Guide Routes */}
           <Route path="/guide/auth" element={<GuideAuth />} />
-          <Route path="/guide" element={<GuideDashboard />} />
-          <Route path="/guide/bookings" element={<GuideBookings />} />
-          <Route path="/guide/profile" element={<GuideProfile />} />
+        <Route path="/guide" element={<GuideDashboard />} />
+        <Route path="/guide/tours" element={<GuideTours />} />
+        <Route path="/guide/bookings" element={<GuideBookings />} />
+        <Route path="/guide/profile" element={<GuideProfile />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

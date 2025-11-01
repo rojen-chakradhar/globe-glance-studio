@@ -25,6 +25,7 @@ export type Database = {
           start_date: string
           status: string | null
           total_amount: number
+          tour_id: string | null
           tourist_id: string
           updated_at: string | null
         }
@@ -38,6 +39,7 @@ export type Database = {
           start_date: string
           status?: string | null
           total_amount: number
+          tour_id?: string | null
           tourist_id: string
           updated_at?: string | null
         }
@@ -51,10 +53,19 @@ export type Database = {
           start_date?: string
           status?: string | null
           total_amount?: number
+          tour_id?: string | null
           tourist_id?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bookings_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       guide_profiles: {
         Row: {
@@ -115,6 +126,65 @@ export type Database = {
           verified?: boolean | null
         }
         Relationships: []
+      }
+      tours: {
+        Row: {
+          created_at: string | null
+          description: string
+          destination: string
+          duration_hours: number
+          guide_id: string
+          id: string
+          image_url: string | null
+          included_services: string[] | null
+          languages: string[]
+          max_group_size: number
+          price_per_person: number
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          destination: string
+          duration_hours: number
+          guide_id: string
+          id?: string
+          image_url?: string | null
+          included_services?: string[] | null
+          languages?: string[]
+          max_group_size?: number
+          price_per_person: number
+          status?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          destination?: string
+          duration_hours?: number
+          guide_id?: string
+          id?: string
+          image_url?: string | null
+          included_services?: string[] | null
+          languages?: string[]
+          max_group_size?: number
+          price_per_person?: number
+          status?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tours_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "guide_profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
