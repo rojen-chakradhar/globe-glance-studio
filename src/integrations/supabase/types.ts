@@ -299,6 +299,39 @@ export type Database = {
           },
         ]
       }
+      reviews: {
+        Row: {
+          booking_id: string
+          comment: string | null
+          created_at: string | null
+          guide_id: string
+          id: string
+          rating: number
+          tourist_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          booking_id: string
+          comment?: string | null
+          created_at?: string | null
+          guide_id: string
+          id?: string
+          rating: number
+          tourist_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          booking_id?: string
+          comment?: string | null
+          created_at?: string | null
+          guide_id?: string
+          id?: string
+          rating?: number
+          tourist_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       token_transactions: {
         Row: {
           amount: number
