@@ -165,6 +165,33 @@ export type Database = {
         }
         Relationships: []
       }
+      guide_tokens: {
+        Row: {
+          balance: number
+          created_at: string
+          currency: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       kyc_verifications: {
         Row: {
           bad_habits: string | null
@@ -271,6 +298,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      token_transactions: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          created_at: string
+          direction: string
+          id: string
+          metadata: Json | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          booking_id?: string | null
+          created_at?: string
+          direction: string
+          id?: string
+          metadata?: Json | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          direction?: string
+          id?: string
+          metadata?: Json | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       tour_requests: {
         Row: {

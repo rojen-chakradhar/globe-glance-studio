@@ -61,7 +61,33 @@ const GuideBookings = () => {
     }
   };
 
+  const finalizeBooking = async (bookingId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('finalize-booking', {
+        body: { booking_id: bookingId },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Booking accepted",
+        description: "Commission deducted from your token balance.",
+      });
+
+      fetchBookings();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error?.message || "Unable to accept booking. If your token balance is low, please recharge.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const updateBookingStatus = async (bookingId: string, status: string) => {
+    if (status === 'confirmed') {
+      return finalizeBooking(bookingId);
+    }
     try {
       const { error } = await supabase
         .from('bookings')
@@ -87,31 +113,9 @@ const GuideBookings = () => {
 
   const acceptScheduleRequest = async (bookingId: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const { error } = await supabase
-        .from('bookings')
-        .update({ 
-          guide_id: session.user.id,
-          status: 'confirmed'
-        })
-        .eq('id', bookingId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Request accepted",
-        description: "The custom trip request has been added to your bookings.",
-      });
-
-      fetchBookings();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      await finalizeBooking(bookingId);
+    } catch (error) {
+      // finalizeBooking already handles toasts
     }
   };
 
