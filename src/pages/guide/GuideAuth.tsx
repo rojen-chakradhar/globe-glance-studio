@@ -179,21 +179,21 @@ const GuideAuth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Navbar */}
-      <nav className="bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-4 py-4">
+      <nav className="bg-background/80 backdrop-blur-md border-b border-border flex-shrink-0">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-ocean">
-              <Compass className="h-6 w-6 text-primary-foreground" />
+            <div className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full bg-gradient-ocean">
+              <Compass className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
             </div>
-            <span className="text-2xl font-bold text-foreground">Travelone Buddies</span>
+            <span className="text-xl sm:text-2xl font-bold text-foreground">Travelone Buddies</span>
           </Link>
         </div>
       </nav>
 
       {/* Form */}
-      <div className="flex items-center justify-center p-4 min-h-[calc(100vh-80px)]">
+      <div className="flex-1 flex items-center justify-center p-4 py-6">
         <Card className="w-full max-w-md shadow-elevated">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">
