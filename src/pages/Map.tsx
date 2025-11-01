@@ -13,6 +13,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const STANDARD_PRICE = 500;
 const PRICE_INCREMENT = 10;
@@ -30,6 +31,7 @@ interface GuideInterest {
 }
 
 export default function Map() {
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const [destination, setDestination] = useState("");
   const [requirements, setRequirements] = useState("");
@@ -352,7 +354,7 @@ export default function Map() {
               </div>
 
               <div className="space-y-2">
-                <Label>Your Budget (₹ per day)</Label>
+                <Label>Your Budget (per day)</Label>
                 <div className="flex items-center gap-4">
                   <Button
                     type="button"
@@ -364,9 +366,9 @@ export default function Map() {
                     <Minus className="h-4 w-4" />
                   </Button>
                   <div className="flex-1 text-center">
-                    <div className="text-2xl font-bold">₹{price}</div>
+                    <div className="text-2xl font-bold">{formatPrice(price)}</div>
                     <div className="text-xs text-muted-foreground">
-                      Standard: ₹{STANDARD_PRICE}
+                      Standard: {formatPrice(STANDARD_PRICE)}
                     </div>
                   </div>
                   <Button
@@ -416,7 +418,7 @@ export default function Map() {
                   </div>
                   <div className="text-sm font-semibold text-primary flex items-center gap-1 mt-1">
                     <DollarSign className="h-4 w-4" />
-                    ₹{guide.counter_offer_price}/day
+                    {formatPrice(guide.counter_offer_price)}
                   </div>
                   {guide.message && (
                     <div className="text-xs text-muted-foreground mt-2 italic">

@@ -9,8 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const GuideDashboard = () => {
+  const { currency, setCurrency, formatPrice } = useCurrency();
   const [user, setUser] = useState<any>(null);
   const [guideProfile, setGuideProfile] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
@@ -322,6 +324,26 @@ const GuideDashboard = () => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-4">
+              {/* Currency Selector */}
+              <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
+                <Button
+                  variant={currency === 'NPR' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setCurrency('NPR')}
+                  className="h-8 px-3"
+                >
+                  NPR
+                </Button>
+                <Button
+                  variant={currency === 'USD' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setCurrency('USD')}
+                  className="h-8 px-3"
+                >
+                  USD
+                </Button>
+              </div>
+              
               <Button variant="ghost" size="sm" onClick={(e) => handleNavClick(e, "/guide/requests")}>
                 <MapPin className="h-4 w-4 mr-2" />
                 Buddy Requests
@@ -484,8 +506,8 @@ const GuideDashboard = () => {
                   <DollarSign className="h-4 w-4 text-primary" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-foreground">NPR {stats.totalEarnings.toFixed(2)}</div>
-                  <p className="text-xs text-muted-foreground">From completed tours</p>
+                  <div className="text-2xl font-bold text-foreground">{formatPrice(stats.totalEarnings)}</div>
+                  <p className="text-xs text-muted-foreground">Company takes 15% commission</p>
                 </CardContent>
               </Card>
 

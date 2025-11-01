@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, Search, CalendarDays, Menu, X, User, Settings, HelpCircle, Gift, Shield, LogOut, DollarSign, FileText, Plus } from "lucide-react";
+import { MapPin, Users, Plane, Navigation, MessageCircle, Globe, Calendar, Clock, Star, Languages, Home, Car, Sparkles, ChevronDown, CalendarDays, Menu, X, User, Settings, HelpCircle, Gift, Shield, LogOut, DollarSign, FileText, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
@@ -46,17 +46,7 @@ const scheduleSchema = z.object({
 });
 
 const Index = () => {
-  // Map Filters state used in the Map tab (25% sidebar / 75% map)
-  const [filters, setFilters] = useState({
-    time: "",
-    stay: "",
-    vehicle: { needed: false, type: "" },
-    interests: [] as string[],
-    duration: 4, // hours
-  });
-  
-  const [searchLocation, setSearchLocation] = useState("");
-  const [showMobileMap, setShowMobileMap] = useState(false);
+  const { currency, setCurrency } = useCurrency();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   
@@ -109,26 +99,6 @@ const Index = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-  };
-
-  const handleLocationSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && searchLocation.trim()) {
-      setShowMobileMap(true);
-    }
-  };
-
-  const timeOptions = ["1 hour", "Few hours (2-4)", "Half day", "Full day", "2-3 days", "Week+"];
-  const stayOptions = ["No stay needed", "Homestay", "Hotel", "Hostel", "Resort"];
-  const vehicleTypes = ["Bike/Scooter", "Car", "SUV", "Bus", "Jeep"];
-  const interestOptions = ["Nature", "Culture", "Tradition", "Local areas", "Adventure", "Food", "Religious sites"];
-
-  const handleInterestToggle = (interest: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      interests: prev.interests.includes(interest)
-        ? prev.interests.filter((i) => i !== interest)
-        : [...prev.interests, interest],
-    }));
   };
 
   const fetchTripsData = async () => {
@@ -433,6 +403,26 @@ const Index = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
+              {/* Currency Selector */}
+              <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
+                <Button
+                  variant={currency === 'NPR' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setCurrency('NPR')}
+                  className="h-8 px-3"
+                >
+                  NPR
+                </Button>
+                <Button
+                  variant={currency === 'USD' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setCurrency('USD')}
+                  className="h-8 px-3"
+                >
+                  USD
+                </Button>
+              </div>
+              
             {user ? (
                 <>
               <Link to="/map">
@@ -650,373 +640,26 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Map Tab Content */}
+          {/* Find Buddies Tab Content */}
           <TabsContent value="map" className="m-0">
             <section className="py-12 px-4 min-h-screen">
-              <div className="container mx-auto">
-                <div className="max-w-7xl mx-auto">
-                  <div className="mb-6 text-center">
-                    <h2 className="text-3xl font-bold mb-2">Live Guide Tracking</h2>
+              <div className="container mx-auto max-w-2xl">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-2xl">Find Buddies</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
                     <p className="text-muted-foreground">
-                      Green markers show available guides. Click on any guide to see their details and request them.
+                      Use the interactive map to search for nearby guides, see their offers, and choose who to meet.
                     </p>
-                  </div>
-
-                  {/* Sidebar (25%) + Map (75%) */}
-                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-                    {/* Mobile Search and Filter - Only visible on mobile */}
-                    <div className="lg:hidden space-y-4 mb-4">
-                      {/* Location Search */}
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          type="text" 
-                          placeholder="Where to?" 
-                          className="w-full pl-10"
-                          value={searchLocation}
-                          onChange={(e) => setSearchLocation(e.target.value)}
-                          onKeyDown={handleLocationSearch}
-                        />
-                      </div>
-                      
-                      {/* Filter Button */}
-                      <Sheet>
-                        <SheetTrigger asChild>
-                          <Button 
-                            variant="default"
-                            className="w-full"
-                          >
-                            <Sparkles className="h-4 w-4 mr-2" />
-                            Show Filters
-                          </Button>
-                        </SheetTrigger>
-                        <SheetContent side="right" className="w-[300px] sm:w-[400px] overflow-y-auto z-[1100]">
-                          <div className="space-y-6 pt-6">
-                            <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
-                              <Sparkles className="h-5 w-5 text-primary" />
-                              Filters
-                            </h2>
-
-                            {/* Duration Filter */}
-                            <Collapsible defaultOpen>
-                              <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium text-foreground">Guide Duration</h3>
-                                <ChevronDown className="h-4 w-4" />
-                              </CollapsibleTrigger>
-                              <CollapsibleContent className="pt-4 space-y-4">
-                                <div className="space-y-2">
-                                  <div className="flex items-center justify-between">
-                                    <Label className="text-foreground">Hours needed</Label>
-                                    <span className="text-sm font-semibold text-primary">{filters.duration}h</span>
-                                  </div>
-                                  <Slider
-                                    value={[filters.duration]}
-                                    onValueChange={(value) => setFilters({ ...filters, duration: value[0] })}
-                                    min={1}
-                                    max={24}
-                                    step={1}
-                                    className="w-full"
-                                  />
-                                  <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span>1h</span>
-                                    <span>24h</span>
-                                  </div>
-                                </div>
-                              </CollapsibleContent>
-                            </Collapsible>
-
-                            {/* Vehicle */}
-                            <Collapsible defaultOpen>
-                              <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium text-foreground">Vehicle</h3>
-                                <ChevronDown className="h-4 w-4" />
-                              </CollapsibleTrigger>
-                              <CollapsibleContent className="pt-4 space-y-4">
-                                <div className="flex items-center space-x-2">
-                                  <Checkbox
-                                    id="mobile-vehicle-needed"
-                                    checked={filters.vehicle.needed}
-                                    onCheckedChange={(checked) =>
-                                      setFilters({
-                                        ...filters,
-                                        vehicle: { ...filters.vehicle, needed: checked as boolean },
-                                      })
-                                    }
-                                  />
-                                  <Label htmlFor="mobile-vehicle-needed" className="text-foreground">Vehicle Needed</Label>
-                                </div>
-                                {filters.vehicle.needed && (
-                                  <RadioGroup
-                                    value={filters.vehicle.type}
-                                    onValueChange={(value) =>
-                                      setFilters({
-                                        ...filters,
-                                        vehicle: { ...filters.vehicle, type: value },
-                                      })
-                                    }
-                                  >
-                                    <div className="flex items-center space-x-2">
-                                      <RadioGroupItem value="car" id="mobile-car" />
-                                      <Label htmlFor="mobile-car" className="text-foreground">Car</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <RadioGroupItem value="bike" id="mobile-bike" />
-                                      <Label htmlFor="mobile-bike" className="text-foreground">Bike</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <RadioGroupItem value="van" id="mobile-van" />
-                                      <Label htmlFor="mobile-van" className="text-foreground">Van</Label>
-                                    </div>
-                                  </RadioGroup>
-                                )}
-                              </CollapsibleContent>
-                            </Collapsible>
-
-                            {/* Interests */}
-                            <Collapsible defaultOpen>
-                              <CollapsibleTrigger className="flex items-center justify-between w-full">
-                                <h3 className="font-medium text-foreground">Interests</h3>
-                                <ChevronDown className="h-4 w-4" />
-                              </CollapsibleTrigger>
-                              <CollapsibleContent className="pt-4 space-y-2">
-                                {["Cultural", "Adventure", "Food", "History", "Nature", "Shopping"].map((interest) => (
-                                  <div key={interest} className="flex items-center space-x-2">
-                                    <Checkbox
-                                      id={`mobile-${interest.toLowerCase()}`}
-                                      checked={filters.interests.includes(interest)}
-                                      onCheckedChange={(checked) => {
-                                        if (checked) {
-                                          setFilters({
-                                            ...filters,
-                                            interests: [...filters.interests, interest],
-                                          });
-                                        } else {
-                                          setFilters({
-                                            ...filters,
-                                            interests: filters.interests.filter((i) => i !== interest),
-                                          });
-                                        }
-                                      }}
-                                    />
-                                    <Label htmlFor={`mobile-${interest.toLowerCase()}`} className="text-foreground">{interest}</Label>
-                                  </div>
-                                ))}
-                              </CollapsibleContent>
-                            </Collapsible>
-
-                            {/* Apply Filter Button */}
-                            <Button 
-                              className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90"
-                              onClick={() => {
-                                console.log("Filtering with:", filters);
-                              }}
-                            >
-                              Apply Filters
-                            </Button>
-                          </div>
-                        </SheetContent>
-                      </Sheet>
-                    </div>
-
-                    {/* Mobile Map - Shows only when location is searched */}
-                    {showMobileMap && (
-                      <div className="lg:hidden relative z-0 mb-4">
-                        <InteractiveMap filters={filters} searchLocation={searchLocation} showBuddies={true} />
-                      </div>
-                    )}
-
-                    {/* Map Container - Left side on desktop, hidden on mobile */}
-                    <div className="lg:col-span-3 relative z-0 hidden lg:block">
-                      <InteractiveMap filters={filters} searchLocation={searchLocation} showBuddies={!!searchLocation} />
-                    </div>
-
-                    {/* Filter Sidebar - Right side on desktop, hidden on mobile */}
-                    <Card className="p-6 space-y-6 sticky top-[120px] lg:col-span-1 hidden lg:block">
-                      {/* Desktop Location Search */}
-                      <div>
-                        <Label className="text-sm font-medium text-foreground mb-2 block">Search Location</Label>
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input 
-                            type="text" 
-                            placeholder="Where to?" 
-                            className="w-full pl-10"
-                            value={searchLocation}
-                            onChange={(e) => setSearchLocation(e.target.value)}
-                            onKeyDown={handleLocationSearch}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
-                          <Sparkles className="h-5 w-5 text-primary" />
-                          Filters
-                        </h2>
-                      </div>
-
-                      {/* Duration Filter */}
-                      <Collapsible defaultOpen>
-                        <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium text-foreground">Guide Duration</h3>
-                          <ChevronDown className="h-4 w-4" />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="pt-4 space-y-4">
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <Label className="text-foreground">Hours needed</Label>
-                              <span className="text-sm font-semibold text-primary">{filters.duration}h</span>
-                            </div>
-                            <Slider
-                              value={[filters.duration]}
-                              onValueChange={(value) => setFilters({ ...filters, duration: value[0] })}
-                              min={1}
-                              max={24}
-                              step={1}
-                              className="w-full"
-                            />
-                            <div className="flex justify-between text-xs text-muted-foreground">
-                              <span>1h</span>
-                              <span>24h</span>
-                            </div>
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
-
-                      {/* Vehicle */}
-                      <Collapsible defaultOpen>
-                        <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium text-foreground">Vehicle</h3>
-                          <ChevronDown className="h-4 w-4" />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="pt-4 space-y-4">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id="vehicle-needed"
-                              checked={filters.vehicle.needed}
-                              onCheckedChange={(checked) =>
-                                setFilters({
-                                  ...filters,
-                                  vehicle: { ...filters.vehicle, needed: checked as boolean },
-                                })
-                              }
-                            />
-                            <Label htmlFor="vehicle-needed" className="text-foreground">Vehicle Needed</Label>
-                          </div>
-                          {filters.vehicle.needed && (
-                            <RadioGroup
-                              value={filters.vehicle.type}
-                              onValueChange={(value) =>
-                                setFilters({
-                                  ...filters,
-                                  vehicle: { ...filters.vehicle, type: value },
-                                })
-                              }
-                            >
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="car" id="car" />
-                                <Label htmlFor="car" className="text-foreground">Car</Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="bike" id="bike" />
-                                <Label htmlFor="bike" className="text-foreground">Bike</Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="van" id="van" />
-                                <Label htmlFor="van" className="text-foreground">Van</Label>
-                              </div>
-                            </RadioGroup>
-                          )}
-                        </CollapsibleContent>
-                      </Collapsible>
-
-                      {/* Interests */}
-                      <Collapsible defaultOpen>
-                        <CollapsibleTrigger className="flex items-center justify-between w-full">
-                          <h3 className="font-medium text-foreground">Interests</h3>
-                          <ChevronDown className="h-4 w-4" />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="pt-4 space-y-2">
-                          {["Cultural", "Adventure", "Food", "History", "Nature", "Shopping"].map((interest) => (
-                            <div key={interest} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={interest.toLowerCase()}
-                                checked={filters.interests.includes(interest)}
-                                onCheckedChange={(checked) => {
-                                  if (checked) {
-                                    setFilters({
-                                      ...filters,
-                                      interests: [...filters.interests, interest],
-                                    });
-                                  } else {
-                                    setFilters({
-                                      ...filters,
-                                      interests: filters.interests.filter((i) => i !== interest),
-                                    });
-                                  }
-                                }}
-                              />
-                              <Label htmlFor={interest.toLowerCase()} className="text-foreground">{interest}</Label>
-                            </div>
-                          ))}
-                        </CollapsibleContent>
-                      </Collapsible>
-
-                      {/* Apply Filter Button */}
-                      <Button 
-                        className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90"
-                        onClick={() => {
-                          console.log("Filtering with:", filters);
-                        }}
-                      >
-                        Apply Filters
+                    <Link to="/map">
+                      <Button className="w-full">
+                        <MapPin className="mr-2 h-4 w-4" />
+                        Find Buddy on Map
                       </Button>
-                    </Card>
-                  </div>
-
-                  <div className="text-center mt-8">
-                    <p className="text-sm text-muted-foreground mb-4">
-                      All guides are licensed and certified by Nepal Tourism Board
-                    </p>
-                  </div>
-                </div>
-
-                {/* About Us Section */}
-                <div className="container mx-auto mt-16 px-4">
-                  <div className="max-w-4xl mx-auto bg-card rounded-lg p-8 shadow-md">
-                    <h2 className="text-3xl font-bold text-center mb-6">About Us</h2>
-                    <div className="space-y-4 text-muted-foreground">
-                      <p>
-                        Welcome to Travelone - your premier platform for discovering the wonders of Nepal with certified local guides. 
-                        We connect travelers from around the world with experienced, licensed guides who know Nepal's hidden gems and cultural treasures.
-                      </p>
-                      <p>
-                        Founded by a team of travel enthusiasts and technology experts, our mission is to make Nepal more accessible 
-                        to tourists while supporting local guide communities. Every guide on our platform is certified by the Nepal Tourism Board 
-                        and has undergone rigorous training in safety, cultural sensitivity, and hospitality.
-                      </p>
-                      <p>
-                        Whether you're looking to trek the Himalayas, explore ancient temples, taste authentic Nepali cuisine, or experience 
-                        the vibrant culture of Kathmandu, our guides are here to make your journey unforgettable. With real-time tracking, 
-                        multilingual support, and 24/7 customer service, we ensure your safety and satisfaction throughout your adventure.
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-primary mb-2">500+</div>
-                          <div className="text-sm">Certified Guides</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-primary mb-2">10,000+</div>
-                          <div className="text-sm">Happy Travelers</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-primary mb-2">4.9★</div>
-                          <div className="text-sm">Average Rating</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                    </Link>
+                  </CardContent>
+                </Card>
               </div>
             </section>
           </TabsContent>
