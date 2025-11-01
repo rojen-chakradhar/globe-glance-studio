@@ -127,6 +127,104 @@ export type Database = {
         }
         Relationships: []
       }
+      kyc_verifications: {
+        Row: {
+          bad_habits: string | null
+          citizenship_photo_url: string | null
+          created_at: string | null
+          date_of_birth: string
+          dreams: string | null
+          emergency_contact_name: string
+          emergency_contact_phone: string
+          emergency_contact_relation: string
+          experience_description: string
+          full_government_name: string
+          gender: string
+          guide_profile_id: string
+          hobbies: string | null
+          id: string
+          languages: string[]
+          live_photo_url: string | null
+          nid_photo_url: string | null
+          permanent_address: string
+          profession: string
+          qualification: string
+          services_provided: string
+          updated_at: string | null
+          user_id: string
+          verification_notes: string | null
+          verification_status: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          bad_habits?: string | null
+          citizenship_photo_url?: string | null
+          created_at?: string | null
+          date_of_birth: string
+          dreams?: string | null
+          emergency_contact_name: string
+          emergency_contact_phone: string
+          emergency_contact_relation: string
+          experience_description: string
+          full_government_name: string
+          gender: string
+          guide_profile_id: string
+          hobbies?: string | null
+          id?: string
+          languages?: string[]
+          live_photo_url?: string | null
+          nid_photo_url?: string | null
+          permanent_address: string
+          profession: string
+          qualification: string
+          services_provided: string
+          updated_at?: string | null
+          user_id: string
+          verification_notes?: string | null
+          verification_status?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          bad_habits?: string | null
+          citizenship_photo_url?: string | null
+          created_at?: string | null
+          date_of_birth?: string
+          dreams?: string | null
+          emergency_contact_name?: string
+          emergency_contact_phone?: string
+          emergency_contact_relation?: string
+          experience_description?: string
+          full_government_name?: string
+          gender?: string
+          guide_profile_id?: string
+          hobbies?: string | null
+          id?: string
+          languages?: string[]
+          live_photo_url?: string | null
+          nid_photo_url?: string | null
+          permanent_address?: string
+          profession?: string
+          qualification?: string
+          services_provided?: string
+          updated_at?: string | null
+          user_id?: string
+          verification_notes?: string | null
+          verification_status?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kyc_verifications_guide_profile_id_fkey"
+            columns: ["guide_profile_id"]
+            isOneToOne: false
+            referencedRelation: "guide_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tours: {
         Row: {
           created_at: string | null

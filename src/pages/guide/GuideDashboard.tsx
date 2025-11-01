@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Compass, Calendar, DollarSign, Star, LogOut, User, Settings, Menu, X, Clock, MapPin } from "lucide-react";
+import { Compass, Calendar, DollarSign, Star, LogOut, User, Settings, Menu, X, Clock, MapPin, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const GuideDashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -14,12 +15,15 @@ const GuideDashboard = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [kycStatus, setKycStatus] = useState<string | null>(null);
+  const [showKycBanner, setShowKycBanner] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     checkAuth();
     fetchData();
+    checkKycStatus();
   }, []);
 
   const checkAuth = async () => {
@@ -43,6 +47,34 @@ const GuideDashboard = () => {
     }
 
     setUser(session.user);
+  };
+
+  const checkKycStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: kyc, error } = await supabase
+        .from("kyc_verifications")
+        .select("verification_status")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching KYC status:", error);
+        return;
+      }
+
+      if (!kyc) {
+        setShowKycBanner(true);
+        setKycStatus(null);
+      } else {
+        setKycStatus(kyc.verification_status);
+        setShowKycBanner(kyc.verification_status !== 'approved');
+      }
+    } catch (error) {
+      console.error("Error checking KYC status:", error);
+    }
   };
 
   const fetchData = async () => {
@@ -322,6 +354,32 @@ const GuideDashboard = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
+        {/* KYC Verification Banner */}
+        {showKycBanner && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Account Verification Required</AlertTitle>
+            <AlertDescription className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <span>
+                {kycStatus === 'pending' 
+                  ? "Your KYC verification is under review. You'll be notified once approved."
+                  : kycStatus === 'rejected'
+                  ? "Your KYC verification was rejected. Please resubmit with correct information."
+                  : "Please verify your account to start accepting bookings and tours."}
+              </span>
+              {!kycStatus && (
+                <Button 
+                  variant="outline" 
+                  className="shrink-0"
+                  onClick={() => navigate("/guide/kyc")}
+                >
+                  Verify Now
+                </Button>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">

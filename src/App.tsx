@@ -19,6 +19,7 @@ import GuideDashboard from "./pages/guide/GuideDashboard";
 import GuideBookings from "./pages/guide/GuideBookings";
 import GuideProfile from "./pages/guide/GuideProfile";
 import GuideTours from "./pages/guide/GuideTours";
+import GuideKYC from "./pages/guide/GuideKYC";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
         <Route path="/guide/tours" element={<GuideTours />} />
         <Route path="/guide/bookings" element={<GuideBookings />} />
         <Route path="/guide/profile" element={<GuideProfile />} />
+        <Route path="/guide/kyc" element={<GuideKYC />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
