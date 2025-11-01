@@ -89,10 +89,22 @@ export default function Map() {
     };
     window.addEventListener('resize', handler);
     window.addEventListener('orientationchange', handler);
+    window.addEventListener('load', handler);
     return () => {
       window.removeEventListener('resize', handler);
       window.removeEventListener('orientationchange', handler);
+      window.removeEventListener('load', handler);
     };
+  }, []);
+
+  // Observe container size changes (e.g., keyboard, address bar, layout) and refresh map
+  useEffect(() => {
+    if (!mapContainer.current) return;
+    const ro = new ResizeObserver(() => {
+      mapInstance.current?.invalidateSize();
+    });
+    ro.observe(mapContainer.current);
+    return () => ro.disconnect();
   }, []);
   useEffect(() => {
     if (requestId) {
@@ -163,10 +175,14 @@ export default function Map() {
 
     mapInstance.current = map;
     
-    // Ensure Leaflet recalculates size after mount (helps on mobile)
-    setTimeout(() => {
+    // Invalidate size when map is ready and after layout settles (mobile fix)
+    map.whenReady(() => {
       map.invalidateSize();
-    }, 200);
+      requestAnimationFrame(() => {
+        map.invalidateSize();
+      });
+    });
+    setTimeout(() => map.invalidateSize(), 500);
     
     // Add NPC guides around tourist immediately on map load
     setTimeout(() => {
@@ -672,7 +688,7 @@ export default function Map() {
       </div>
 
       {/* Map */}
-      <div className="flex-1 relative h-[70svh] md:h-screen min-h-[50vh] order-first md:order-last">
+      <div className="flex-1 relative h-[70vh] md:h-screen min-h-[60vh] order-first md:order-last">
         <div ref={mapContainer} className="w-full h-full" />
       </div>
     </div>
