@@ -19,8 +19,19 @@ const GuideDashboard = () => {
   const [kycStatus, setKycStatus] = useState<string | null>(null);
   const [showKycBanner, setShowKycBanner] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+  
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleNavClick = (e: React.MouseEvent, path: string) => {
+    if (kycStatus !== 'approved') {
+      e.preventDefault();
+      e.stopPropagation();
+      setShowVerifyModal(true);
+    } else {
+      navigate(path);
+    }
+  };
 
   useEffect(() => {
     checkAuth();
@@ -272,21 +283,7 @@ const GuideDashboard = () => {
   }
 
   return (
-    <div 
-      className="min-h-screen bg-background"
-      onClick={(e) => {
-        // Block all clicks if KYC is not approved
-        if (kycStatus !== 'approved') {
-          const target = e.target as HTMLElement;
-          // Allow clicks inside the modal itself
-          if (!target.closest('[role="dialog"]') && !showVerifyModal) {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowVerifyModal(true);
-          }
-        }
-      }}
-    >
+    <div className="min-h-screen bg-background">
       {/* Verify Account Modal */}
       <Dialog open={showVerifyModal} onOpenChange={setShowVerifyModal}>
         <DialogContent onClick={(e) => e.stopPropagation()}>
@@ -325,24 +322,18 @@ const GuideDashboard = () => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/guide/tours">
-                <Button variant="ghost" size="sm">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  My Tours
-                </Button>
-              </Link>
-              <Link to="/guide/bookings">
-                <Button variant="ghost" size="sm">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Bookings
-                </Button>
-              </Link>
-              <Link to="/guide/profile">
-                <Button variant="ghost" size="sm">
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
-                </Button>
-              </Link>
+              <Button variant="ghost" size="sm" onClick={(e) => handleNavClick(e, "/guide/tours")}>
+                <Calendar className="h-4 w-4 mr-2" />
+                My Tours
+              </Button>
+              <Button variant="ghost" size="sm" onClick={(e) => handleNavClick(e, "/guide/bookings")}>
+                <Calendar className="h-4 w-4 mr-2" />
+                Bookings
+              </Button>
+              <Button variant="ghost" size="sm" onClick={(e) => handleNavClick(e, "/guide/profile")}>
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Button>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -363,24 +354,39 @@ const GuideDashboard = () => {
           {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="md:hidden mt-4 space-y-2">
-              <Link to="/guide/tours" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" className="w-full justify-start">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  My Tours
-                </Button>
-              </Link>
-              <Link to="/guide/bookings" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" className="w-full justify-start">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Bookings
-                </Button>
-              </Link>
-              <Link to="/guide/profile" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="ghost" className="w-full justify-start">
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleNavClick(e, "/guide/tours");
+                }}
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                My Tours
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleNavClick(e, "/guide/bookings");
+                }}
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Bookings
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleNavClick(e, "/guide/profile");
+                }}
+              >
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Button>
               <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout

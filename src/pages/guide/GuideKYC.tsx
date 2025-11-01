@@ -47,6 +47,7 @@ const GuideKYC = () => {
 
   const [livePhotoBlob, setLivePhotoBlob] = useState<Blob | null>(null);
   const [showCamera, setShowCamera] = useState(false);
+  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -58,41 +59,50 @@ const GuideKYC = () => {
     }
   };
 
-  const capturePhoto = async () => {
+  const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      const video = document.createElement('video');
-      video.srcObject = stream;
-      video.play();
-
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx?.drawImage(video, 0, 0);
-
-      stream.getTracks().forEach(track => track.stop());
-
-      canvas.toBlob((blob) => {
-        if (blob) {
-          setLivePhotoBlob(blob);
-          setShowCamera(false);
-          toast({
-            title: "Photo Captured",
-            description: "Live photo captured successfully",
-          });
-        }
-      }, 'image/jpeg');
+      setVideoStream(stream);
+      setShowCamera(true);
     } catch (error: any) {
       toast({
         title: "Camera Error",
         description: error.message,
         variant: "destructive",
       });
-      setShowCamera(false);
     }
+  };
+
+  const capturePhoto = () => {
+    if (!videoStream) return;
+
+    const video = document.getElementById('camera-preview') as HTMLVideoElement;
+    if (!video) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(video, 0, 0);
+
+    canvas.toBlob((blob) => {
+      if (blob) {
+        setLivePhotoBlob(blob);
+        stopCamera();
+        toast({
+          title: "Photo Captured",
+          description: "Live photo captured successfully",
+        });
+      }
+    }, 'image/jpeg');
+  };
+
+  const stopCamera = () => {
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+      setVideoStream(null);
+    }
+    setShowCamera(false);
   };
 
   const uploadFile = async (file: File | Blob, bucket: string, path: string) => {
@@ -264,7 +274,7 @@ const GuideKYC = () => {
 
               <div>
                 <Label htmlFor="gender">Gender *</Label>
-                <Select name="gender" value={formData.gender} onValueChange={(value) => setFormData({ ...formData, gender: value })}>
+                <Select name="gender" value={formData.gender} onValueChange={(value) => setFormData({ ...formData, gender: value })} required>
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
@@ -272,7 +282,6 @@ const GuideKYC = () => {
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
-                    <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -294,7 +303,7 @@ const GuideKYC = () => {
               <h2 className="text-xl font-semibold">Documents</h2>
               
               <div>
-                <Label htmlFor="citizenship">Citizenship Photo</Label>
+                <Label htmlFor="citizenship">Citizenship Photo *</Label>
                 <div className="flex items-center gap-2">
                   <Input
                     id="citizenship"
@@ -302,6 +311,7 @@ const GuideKYC = () => {
                     accept="image/*"
                     onChange={(e) => handleFileChange(e, 'citizenship')}
                     className="hidden"
+                    required
                   />
                   <Button
                     type="button"
@@ -315,7 +325,7 @@ const GuideKYC = () => {
               </div>
 
               <div>
-                <Label htmlFor="nid">National ID Photo</Label>
+                <Label htmlFor="nid">National ID Photo *</Label>
                 <div className="flex items-center gap-2">
                   <Input
                     id="nid"
@@ -323,6 +333,7 @@ const GuideKYC = () => {
                     accept="image/*"
                     onChange={(e) => handleFileChange(e, 'nid')}
                     className="hidden"
+                    required
                   />
                   <Button
                     type="button"
@@ -336,19 +347,56 @@ const GuideKYC = () => {
               </div>
 
               <div>
-                <Label htmlFor="livePhoto">Live Photo (Required) *</Label>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setShowCamera(true);
-                      setTimeout(capturePhoto, 100);
-                    }}
-                  >
-                    <Upload className="mr-2 h-4 w-4" />
-                    {livePhotoBlob ? "Photo Captured ✓" : "Capture Live Photo"}
-                  </Button>
+                <Label htmlFor="livePhoto">Live Photo *</Label>
+                <div className="space-y-2">
+                  {!showCamera && !livePhotoBlob && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={startCamera}
+                    >
+                      <Upload className="mr-2 h-4 w-4" />
+                      Open Camera
+                    </Button>
+                  )}
+                  
+                  {showCamera && (
+                    <div className="space-y-2">
+                      <video
+                        id="camera-preview"
+                        autoPlay
+                        playsInline
+                        ref={(video) => {
+                          if (video && videoStream) {
+                            video.srcObject = videoStream;
+                          }
+                        }}
+                        className="w-full max-w-md rounded-lg border"
+                      />
+                      <div className="flex gap-2">
+                        <Button type="button" onClick={capturePhoto}>
+                          Capture Photo
+                        </Button>
+                        <Button type="button" variant="outline" onClick={stopCamera}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {livePhotoBlob && !showCamera && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">✓ Photo Captured</span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={startCamera}
+                      >
+                        Retake
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
 
