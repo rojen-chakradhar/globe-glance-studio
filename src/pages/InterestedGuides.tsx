@@ -8,6 +8,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { ArrowLeft, Star, MapPin } from "lucide-react";
 
+interface TourRequest {
+  id: string;
+  destination: string;
+  requirements: string;
+  offered_price: number;
+  duration_hours: number;
+  status: string;
+  created_at: string;
+}
+
 interface GuideInterest {
   id: string;
   counter_offer_price: number;
@@ -30,8 +40,8 @@ export default function InterestedGuides() {
   const { requestId } = useParams();
   const navigate = useNavigate();
   const [interests, setInterests] = useState<GuideInterest[]>([]);
+  const [request, setRequest] = useState<TourRequest | null>(null);
   const [loading, setLoading] = useState(true);
-  const [destination, setDestination] = useState("");
 
   useEffect(() => {
     fetchInterests();
@@ -67,19 +77,19 @@ export default function InterestedGuides() {
       }
 
       // Fetch request details
-      const { data: request } = await supabase
+      const { data: requestData } = await supabase
         .from("tour_requests")
-        .select("destination, tourist_id")
+        .select("*")
         .eq("id", requestId)
         .single();
 
-      if (request?.tourist_id !== user.id) {
+      if (requestData?.tourist_id !== user.id) {
         toast.error("Unauthorized");
         navigate("/my-requests");
         return;
       }
 
-      setDestination(request.destination);
+      setRequest(requestData);
 
       // Fetch interests
       const { data: interestsData, error } = await supabase
@@ -153,12 +163,38 @@ export default function InterestedGuides() {
           Back to My Requests
         </Link>
 
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Interested Guides</h1>
-          <p className="text-muted-foreground">
-            For trip to <span className="font-semibold">{destination}</span>
-          </p>
-        </div>
+        <h1 className="text-3xl font-bold mb-6">Interested Guides</h1>
+
+        {request && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Request Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <span className="font-semibold">Destination:</span> {request.destination}
+              </div>
+              <div>
+                <span className="font-semibold">Duration:</span> {request.duration_hours} hours
+              </div>
+              <div>
+                <span className="font-semibold">Your Budget:</span> ₹{request.offered_price}
+              </div>
+              <div>
+                <span className="font-semibold">Status:</span>{" "}
+                <Badge variant={request.status === "open" ? "default" : "secondary"}>
+                  {request.status}
+                </Badge>
+              </div>
+              {request.requirements && (
+                <div>
+                  <span className="font-semibold">Requirements:</span>
+                  <p className="mt-1 text-muted-foreground">{request.requirements}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {interests.length === 0 ? (
           <Card>
