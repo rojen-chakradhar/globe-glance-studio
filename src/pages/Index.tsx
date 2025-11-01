@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 import InteractiveMap from "@/components/InteractiveMap";
 import TravelChatbot from "@/components/TravelChatbot";
 import Footer from "@/components/Footer";
-import ScheduleView from "@/components/ScheduleView";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
@@ -67,7 +66,6 @@ const Index = () => {
   const [guides, setGuides] = useState<Record<string, any>>({});
   const [selectedTour, setSelectedTour] = useState<any>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [tripsLoading, setTripsLoading] = useState(false);
   
@@ -304,7 +302,6 @@ const Index = () => {
         description: "Guides can now view and accept your custom trip request.",
       });
 
-      setScheduleDialogOpen(false);
       setScheduleData({
         destination: "",
         start_date: "",
@@ -1003,7 +1000,122 @@ const Index = () => {
 
           {/* Schedule Tab Content */}
           <TabsContent value="schedule" className="m-0">
-            <ScheduleView />
+            <section className="py-12 px-4 min-h-screen">
+              <div className="container mx-auto max-w-2xl">
+                {user ? (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-2xl">Request Custom Trip</CardTitle>
+                      <p className="text-muted-foreground">Create a custom trip request and guides will be able to view and accept it</p>
+                    </CardHeader>
+                    <CardContent>
+                      <form onSubmit={handleScheduleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="destination">Destination</Label>
+                          <Input
+                            id="destination"
+                            name="destination"
+                            value={scheduleData.destination}
+                            onChange={(e) => setScheduleData({ ...scheduleData, destination: e.target.value })}
+                            placeholder="e.g., Pokhara, Chitwan, Lumbini"
+                            required
+                          />
+                          {errors.destination && <p className="text-sm text-destructive">{errors.destination}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="schedule_start_date">Start Date</Label>
+                          <Input
+                            id="schedule_start_date"
+                            name="start_date"
+                            type="date"
+                            value={scheduleData.start_date}
+                            onChange={(e) => setScheduleData({ ...scheduleData, start_date: e.target.value })}
+                            min={new Date().toISOString().split('T')[0]}
+                            required
+                          />
+                          {errors.start_date && <p className="text-sm text-destructive">{errors.start_date}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="duration_hours">Duration (hours)</Label>
+                          <Input
+                            id="duration_hours"
+                            name="duration_hours"
+                            type="number"
+                            value={scheduleData.duration_hours}
+                            onChange={(e) => setScheduleData({ ...scheduleData, duration_hours: parseInt(e.target.value) })}
+                            min="1"
+                            max="72"
+                            required
+                          />
+                          {errors.duration_hours && <p className="text-sm text-destructive">{errors.duration_hours}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="schedule_group_size">Number of People</Label>
+                          <Input
+                            id="schedule_group_size"
+                            name="group_size"
+                            type="number"
+                            value={scheduleData.group_size}
+                            onChange={(e) => setScheduleData({ ...scheduleData, group_size: parseInt(e.target.value) })}
+                            min="1"
+                            required
+                          />
+                          {errors.group_size && <p className="text-sm text-destructive">{errors.group_size}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="budget">Budget (NPR)</Label>
+                          <Input
+                            id="budget"
+                            name="budget"
+                            type="number"
+                            value={scheduleData.budget}
+                            onChange={(e) => setScheduleData({ ...scheduleData, budget: parseFloat(e.target.value) })}
+                            min="0"
+                            placeholder="Your estimated budget"
+                            required
+                          />
+                          {errors.budget && <p className="text-sm text-destructive">{errors.budget}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="schedule_special_requests">Trip Details & Preferences</Label>
+                          <Textarea
+                            id="schedule_special_requests"
+                            name="special_requests"
+                            value={scheduleData.special_requests}
+                            onChange={(e) => setScheduleData({ ...scheduleData, special_requests: e.target.value })}
+                            placeholder="Describe what you'd like to do, places to visit, preferences..."
+                            rows={4}
+                            maxLength={1000}
+                          />
+                          {errors.special_requests && <p className="text-sm text-destructive">{errors.special_requests}</p>}
+                        </div>
+
+                        <Button type="submit" className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Send Request
+                        </Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="text-center py-12">
+                    <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+                    <h2 className="text-2xl font-bold mb-2">Login Required</h2>
+                    <p className="text-muted-foreground mb-6">Please log in to create custom trip requests</p>
+                    <Link to="/auth">
+                      <Button className="bg-gradient-ocean text-primary-foreground hover:opacity-90">
+                        Go to Login
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </section>
           </TabsContent>
 
           {/* Trips Tab Content */}
@@ -1012,18 +1124,9 @@ const Index = () => {
               <div className="container mx-auto">
                 {user ? (
                   <>
-                    <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                      <div>
-                        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">My Trips</h1>
-                        <p className="text-muted-foreground">Browse tours and manage your bookings</p>
-                      </div>
-                      <Button
-                        onClick={() => setScheduleDialogOpen(true)}
-                        className="bg-gradient-ocean text-primary-foreground hover:opacity-90"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Request Custom Trip
-                      </Button>
+                    <div className="mb-8">
+                      <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">My Trips</h1>
+                      <p className="text-muted-foreground">Browse tours and manage your bookings</p>
                     </div>
 
                     {tripsLoading ? (
@@ -1215,109 +1318,6 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Custom Schedule Request Dialog */}
-      <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Request Custom Trip</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleScheduleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="destination">Destination</Label>
-              <Input
-                id="destination"
-                name="destination"
-                value={scheduleData.destination}
-                onChange={(e) => setScheduleData({ ...scheduleData, destination: e.target.value })}
-                placeholder="e.g., Pokhara, Chitwan, Lumbini"
-                required
-              />
-              {errors.destination && <p className="text-sm text-destructive">{errors.destination}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="schedule_start_date">Start Date</Label>
-              <Input
-                id="schedule_start_date"
-                name="start_date"
-                type="date"
-                value={scheduleData.start_date}
-                onChange={(e) => setScheduleData({ ...scheduleData, start_date: e.target.value })}
-                min={new Date().toISOString().split('T')[0]}
-                required
-              />
-              {errors.start_date && <p className="text-sm text-destructive">{errors.start_date}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="duration_hours">Duration (hours)</Label>
-              <Input
-                id="duration_hours"
-                name="duration_hours"
-                type="number"
-                value={scheduleData.duration_hours}
-                onChange={(e) => setScheduleData({ ...scheduleData, duration_hours: parseInt(e.target.value) })}
-                min="1"
-                max="72"
-                required
-              />
-              {errors.duration_hours && <p className="text-sm text-destructive">{errors.duration_hours}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="schedule_group_size">Number of People</Label>
-              <Input
-                id="schedule_group_size"
-                name="group_size"
-                type="number"
-                value={scheduleData.group_size}
-                onChange={(e) => setScheduleData({ ...scheduleData, group_size: parseInt(e.target.value) })}
-                min="1"
-                required
-              />
-              {errors.group_size && <p className="text-sm text-destructive">{errors.group_size}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="budget">Budget (NPR)</Label>
-              <Input
-                id="budget"
-                name="budget"
-                type="number"
-                value={scheduleData.budget}
-                onChange={(e) => setScheduleData({ ...scheduleData, budget: parseFloat(e.target.value) })}
-                min="0"
-                placeholder="Your estimated budget"
-                required
-              />
-              {errors.budget && <p className="text-sm text-destructive">{errors.budget}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="schedule_special_requests">Trip Details & Preferences</Label>
-              <Textarea
-                id="schedule_special_requests"
-                name="special_requests"
-                value={scheduleData.special_requests}
-                onChange={(e) => setScheduleData({ ...scheduleData, special_requests: e.target.value })}
-                placeholder="Describe what you'd like to do, places to visit, preferences..."
-                rows={4}
-                maxLength={1000}
-              />
-              {errors.special_requests && <p className="text-sm text-destructive">{errors.special_requests}</p>}
-            </div>
-
-            <div className="flex gap-2">
-              <Button type="button" variant="outline" onClick={() => setScheduleDialogOpen(false)} className="flex-1">
-                Cancel
-              </Button>
-              <Button type="submit" className="flex-1 bg-gradient-ocean text-primary-foreground hover:opacity-90">
-                Send Request
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
