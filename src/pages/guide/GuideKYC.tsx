@@ -124,8 +124,10 @@ const GuideKYC = () => {
     setLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        throw new Error("Please login first to submit KYC");
+      }
 
       // Get guide profile
       const { data: guideProfile, error: profileError } = await supabase

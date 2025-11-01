@@ -16,8 +16,10 @@ import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
-const STANDARD_PRICE = 500;
-const PRICE_INCREMENT = 10;
+const STANDARD_HOURLY_RATE = 50;
+const PRICE_INCREMENT = 5;
+const MIN_HOURS = 1;
+const MAX_HOURS = 24;
 
 interface GuideInterest {
   id: string;
@@ -28,6 +30,7 @@ interface GuideInterest {
     full_name: string;
     location: string;
     user_id: string;
+    hourly_rate: number;
   };
 }
 
@@ -36,7 +39,8 @@ export default function Map() {
   const navigate = useNavigate();
   const [destination, setDestination] = useState("");
   const [requirements, setRequirements] = useState("");
-  const [price, setPrice] = useState(STANDARD_PRICE);
+  const [hourlyRate, setHourlyRate] = useState(STANDARD_HOURLY_RATE);
+  const [durationHours, setDurationHours] = useState(4);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [requestId, setRequestId] = useState<string | null>(null);
   const [interestedGuides, setInterestedGuides] = useState<GuideInterest[]>([]);
@@ -166,7 +170,7 @@ export default function Map() {
 
       const marker = L.marker([guideLat, guideLng], { icon: guideIcon })
         .addTo(mapInstance.current!)
-        .bindPopup(`<b>${guide.guide_profiles.full_name}</b><br>₹${guide.counter_offer_price}/day`);
+        .bindPopup(`<b>${guide.guide_profiles.full_name}</b><br>${formatPrice(guide.counter_offer_price)}/hour`);
 
       marker.on('click', () => {
         setSelectedGuide(guide.guide_id);
@@ -225,7 +229,8 @@ export default function Map() {
           guide_profiles!guide_interests_guide_id_fkey (
             full_name,
             location,
-            user_id
+            user_id,
+            hourly_rate
           )
         `)
         .eq("request_id", requestId)
@@ -239,10 +244,17 @@ export default function Map() {
     }
   };
 
-  const handlePriceChange = (increment: boolean) => {
-    setPrice((prev) => {
-      const newPrice = increment ? prev + PRICE_INCREMENT : prev - PRICE_INCREMENT;
-      return Math.max(0, newPrice);
+  const handleHourlyRateChange = (increment: boolean) => {
+    setHourlyRate((prev) => {
+      const newRate = increment ? prev + PRICE_INCREMENT : prev - PRICE_INCREMENT;
+      return Math.max(PRICE_INCREMENT, newRate);
+    });
+  };
+
+  const handleDurationChange = (increment: boolean) => {
+    setDurationHours((prev) => {
+      const newDuration = increment ? prev + 1 : prev - 1;
+      return Math.max(MIN_HOURS, Math.min(MAX_HOURS, newDuration));
     });
   };
 
@@ -277,7 +289,8 @@ export default function Map() {
         tourist_id: user.id,
         destination,
         requirements,
-        offered_price: price,
+        offered_price: hourlyRate,
+        duration_hours: durationHours,
         tourist_location_lat: lat,
         tourist_location_lng: lng,
       }).select().single();
@@ -324,19 +337,20 @@ export default function Map() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-xl">Find Your Travel Buddy</CardTitle>
               {requestId && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setRequestId(null);
-                    setInterestedGuides([]);
-                    setDestination("");
-                    setRequirements("");
-                    setPrice(STANDARD_PRICE);
-                  }}
-                >
-                  New Search
-                </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setRequestId(null);
+                      setInterestedGuides([]);
+                      setDestination("");
+                      setRequirements("");
+                      setHourlyRate(STANDARD_HOURLY_RATE);
+                      setDurationHours(4);
+                    }}
+                  >
+                    New Search
+                  </Button>
               )}
             </div>
           </CardHeader>
@@ -369,7 +383,37 @@ export default function Map() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label>Your Budget (per day)</Label>
+                      <Label>Duration (hours)</Label>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleDurationChange(false)}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <div className="flex-1 text-center">
+                        <div className="text-2xl font-bold">{durationHours}h</div>
+                        <div className="text-xs text-muted-foreground">
+                          {MIN_HOURS}-{MAX_HOURS} hours
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleDurationChange(true)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Hourly Rate</Label>
                       {/* Currency Selector */}
                       <div className="flex items-center gap-1 p-0.5 bg-muted rounded">
                         <Button
@@ -395,24 +439,27 @@ export default function Map() {
                         type="button"
                         variant="outline"
                         size="icon"
-                        onClick={() => handlePriceChange(false)}
+                        onClick={() => handleHourlyRateChange(false)}
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
                       <div className="flex-1 text-center">
-                        <div className="text-2xl font-bold">{formatPrice(price)}</div>
+                        <div className="text-2xl font-bold">{formatPrice(hourlyRate)}/hr</div>
                         <div className="text-xs text-muted-foreground">
-                          Standard: {formatPrice(STANDARD_PRICE)}
+                          Standard: {formatPrice(STANDARD_HOURLY_RATE)}/hr
                         </div>
                       </div>
                       <Button
                         type="button"
                         variant="outline"
                         size="icon"
-                        onClick={() => handlePriceChange(true)}
+                        onClick={() => handleHourlyRateChange(true)}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
+                    </div>
+                    <div className="text-xs text-muted-foreground text-center pt-1">
+                      Total: {formatPrice(hourlyRate * durationHours)} for {durationHours}h
                     </div>
                   </div>
 
@@ -423,9 +470,11 @@ export default function Map() {
               )}
               
               {requestId && (
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground space-y-1">
                   <p><span className="font-semibold">Destination:</span> {destination}</p>
-                  <p><span className="font-semibold">Budget:</span> {formatPrice(price)}/day</p>
+                  <p><span className="font-semibold">Duration:</span> {durationHours} hours</p>
+                  <p><span className="font-semibold">Hourly Rate:</span> {formatPrice(hourlyRate)}/hr</p>
+                  <p><span className="font-semibold">Total Budget:</span> {formatPrice(hourlyRate * durationHours)}</p>
                 </div>
               )}
             </form>
@@ -448,8 +497,16 @@ export default function Map() {
                   <span className="text-right text-sm text-muted-foreground">{requirements}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold">Budget</span>
-                  <span className="text-primary font-bold">{formatPrice(price)}/day</span>
+                  <span className="font-semibold">Duration</span>
+                  <span className="font-bold">{durationHours} hours</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Hourly Rate</span>
+                  <span className="text-primary font-bold">{formatPrice(hourlyRate)}/hr</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Total Budget</span>
+                  <span className="text-primary font-bold">{formatPrice(hourlyRate * durationHours)}</span>
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t">
                   <span className="font-semibold">Status</span>
@@ -492,32 +549,40 @@ export default function Map() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              {interestedGuides.map((guide) => (
-                <div
-                  key={guide.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                    selectedGuide === guide.guide_id
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  }`}
-                  onClick={() => setSelectedGuide(guide.guide_id)}
-                >
-                  <div className="font-semibold">{guide.guide_profiles.full_name}</div>
-                  <div className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                    <MapPin className="h-3 w-3" />
-                    {guide.guide_profiles.location || "Nearby"}
-                  </div>
-                  <div className="text-sm font-semibold text-primary flex items-center gap-1 mt-1">
-                    <DollarSign className="h-4 w-4" />
-                    {formatPrice(guide.counter_offer_price)}
-                  </div>
-                  {guide.message && (
-                    <div className="text-xs text-muted-foreground mt-2 italic">
-                      "{guide.message}"
+              {interestedGuides.map((guide) => {
+                const totalCost = guide.counter_offer_price * durationHours;
+                return (
+                  <div
+                    key={guide.id}
+                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                      selectedGuide === guide.guide_id
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                    onClick={() => setSelectedGuide(guide.guide_id)}
+                  >
+                    <div className="font-semibold">{guide.guide_profiles.full_name}</div>
+                    <div className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                      <MapPin className="h-3 w-3" />
+                      {guide.guide_profiles.location || "Nearby"}
                     </div>
-                  )}
-                </div>
-              ))}
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="text-sm font-semibold text-primary flex items-center gap-1">
+                        <DollarSign className="h-4 w-4" />
+                        {formatPrice(guide.counter_offer_price)}/hr
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Total: {formatPrice(totalCost)}
+                      </div>
+                    </div>
+                    {guide.message && (
+                      <div className="text-xs text-muted-foreground mt-2 italic">
+                        "{guide.message}"
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
 
               {selectedGuide && (
                 <Button onClick={handleSelectGuide} className="w-full">
