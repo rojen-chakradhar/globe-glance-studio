@@ -3,18 +3,39 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Clock, User, DollarSign, FileText } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar, Clock, User, DollarSign, FileText, MapPin, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 import traveloneLogo from "@/assets/travelone-logo.png";
+
+const bookingSchema = z.object({
+  start_date: z.string().min(1, "Date is required"),
+  group_size: z.number().min(1, "At least 1 person required"),
+  special_requests: z.string().max(500, "Maximum 500 characters"),
+});
 
 const Trips = () => {
   const [bookings, setBookings] = useState<any[]>([]);
+  const [tours, setTours] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [guides, setGuides] = useState<Record<string, any>>({});
+  const [selectedTour, setSelectedTour] = useState<any>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const [bookingData, setBookingData] = useState({
+    start_date: "",
+    group_size: 1,
+    special_requests: "",
+  });
 
   useEffect(() => {
     checkAuthAndFetchBookings();
@@ -33,6 +54,7 @@ const Trips = () => {
         return;
       }
 
+      // Fetch bookings
       const { data: bookingsData, error: bookingsError } = await supabase
         .from('bookings')
         .select('*')
@@ -41,13 +63,28 @@ const Trips = () => {
 
       if (bookingsError) throw bookingsError;
 
-      if (bookingsData && bookingsData.length > 0) {
-        const guideIds = [...new Set(bookingsData.map(b => b.guide_id))];
-        
+      // Fetch available tours
+      const { data: toursData, error: toursError } = await supabase
+        .from('tours')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (toursError) throw toursError;
+
+      // Fetch guide profiles
+      const allGuideIds = [
+        ...new Set([
+          ...(bookingsData?.map(b => b.guide_id) || []),
+          ...(toursData?.map(t => t.guide_id) || [])
+        ])
+      ];
+
+      if (allGuideIds.length > 0) {
         const { data: guidesData, error: guidesError } = await supabase
           .from('guide_profiles')
           .select('*')
-          .in('user_id', guideIds);
+          .in('user_id', allGuideIds);
 
         if (guidesError) throw guidesError;
 
@@ -60,6 +97,7 @@ const Trips = () => {
       }
 
       setBookings(bookingsData || []);
+      setTours(toursData || []);
     } catch (error: any) {
       console.error('Error:', error);
       toast({
@@ -70,6 +108,76 @@ const Trips = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBookingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to book a tour",
+          variant: "destructive",
+        });
+        navigate("/auth");
+        return;
+      }
+
+      bookingSchema.parse({
+        ...bookingData,
+        group_size: Number(bookingData.group_size),
+      });
+
+      const totalAmount = selectedTour.price_per_person * bookingData.group_size;
+
+      const { error } = await supabase
+        .from('bookings')
+        .insert([{
+          tourist_id: session.user.id,
+          guide_id: selectedTour.guide_id,
+          tour_id: selectedTour.id,
+          destination: selectedTour.destination,
+          start_date: new Date(bookingData.start_date).toISOString(),
+          duration_hours: selectedTour.duration_hours,
+          total_amount: totalAmount,
+          special_requests: bookingData.special_requests || null,
+          status: 'pending',
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Booking request sent!",
+        description: "The guide will review your booking request.",
+      });
+
+      setDialogOpen(false);
+      setBookingData({ start_date: "", group_size: 1, special_requests: "" });
+      checkAuthAndFetchBookings();
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
+        });
+        setErrors(fieldErrors);
+      } else {
+        toast({
+          title: "Booking failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const openBookingDialog = (tour: any) => {
+    setSelectedTour(tour);
+    setDialogOpen(true);
   };
 
   const filterBookings = (status: string) => {
@@ -84,12 +192,6 @@ const Trips = () => {
           <CardContent className="py-12 text-center text-muted-foreground">
             <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No bookings found</p>
-            <Button 
-              onClick={() => navigate("/tours")}
-              className="mt-4 bg-gradient-ocean text-primary-foreground hover:opacity-90"
-            >
-              Browse Tours
-            </Button>
           </CardContent>
         </Card>
       );
@@ -186,9 +288,8 @@ const Trips = () => {
             Travelone
           </Link>
           <div className="flex gap-6 text-primary-foreground">
-            <Link to="/map" className="hover:opacity-80 transition-opacity">Map</Link>
-            <Link to="/tours" className="hover:opacity-80 transition-opacity">Tours</Link>
-            <Link to="/trips" className="hover:opacity-80 transition-opacity font-semibold">My Bookings</Link>
+            <Link to="/" className="hover:opacity-80 transition-opacity">Home</Link>
+            <Link to="/trips" className="hover:opacity-80 transition-opacity font-semibold">My Trips</Link>
             <Link to="/events" className="hover:opacity-80 transition-opacity">Events</Link>
           </div>
         </nav>
@@ -196,17 +297,80 @@ const Trips = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">My Bookings</h1>
-          <p className="text-muted-foreground">View and manage your tour bookings</p>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">My Trips</h1>
+          <p className="text-muted-foreground">Browse available tours and manage your bookings</p>
         </div>
 
-        <Tabs defaultValue="all" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 max-w-full sm:max-w-md h-auto">
-            <TabsTrigger value="all" className="text-xs sm:text-sm">All</TabsTrigger>
+        <Tabs defaultValue="available" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 max-w-full sm:max-w-2xl h-auto">
+            <TabsTrigger value="available" className="text-xs sm:text-sm">Available Tours</TabsTrigger>
+            <TabsTrigger value="all" className="text-xs sm:text-sm">All Bookings</TabsTrigger>
             <TabsTrigger value="pending" className="text-xs sm:text-sm">Pending</TabsTrigger>
             <TabsTrigger value="confirmed" className="text-xs sm:text-sm">Confirmed</TabsTrigger>
             <TabsTrigger value="completed" className="text-xs sm:text-sm">Completed</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="available" className="space-y-4">
+            {tours.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center text-muted-foreground">
+                  <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No tours available at the moment</p>
+                  <p className="text-sm mt-2">Check back soon for new tours!</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {tours.map((tour) => {
+                  const guide = guides[tour.guide_id];
+                  return (
+                    <Card key={tour.id} className="hover:shadow-xl transition-shadow flex flex-col">
+                      <CardHeader>
+                        <CardTitle className="text-xl text-foreground">{tour.title}</CardTitle>
+                        {guide && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <User className="h-4 w-4" />
+                            <span>by {guide.full_name}</span>
+                          </div>
+                        )}
+                      </CardHeader>
+                      <CardContent className="space-y-4 flex-1 flex flex-col">
+                        <p className="text-sm text-muted-foreground line-clamp-3 flex-1">
+                          {tour.description}
+                        </p>
+
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <MapPin className="h-4 w-4 flex-shrink-0" />
+                            <span>{tour.destination}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Clock className="h-4 w-4 flex-shrink-0" />
+                            <span>{tour.duration_hours} hours</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Users className="h-4 w-4 flex-shrink-0" />
+                            <span>Max {tour.max_group_size} people</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-foreground font-bold text-lg">
+                            <DollarSign className="h-5 w-5 flex-shrink-0" />
+                            <span>NPR {tour.price_per_person}/person</span>
+                          </div>
+                        </div>
+
+                        <Button
+                          onClick={() => openBookingDialog(tour)}
+                          className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90 mt-4"
+                        >
+                          Book This Tour
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </TabsContent>
 
           <TabsContent value="all" className="space-y-4">
             {renderBookings(filterBookings('all'))}
@@ -225,6 +389,76 @@ const Trips = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Book: {selectedTour?.title}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleBookingSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="start_date">Tour Date</Label>
+              <Input
+                id="start_date"
+                name="start_date"
+                type="date"
+                value={bookingData.start_date}
+                onChange={(e) => setBookingData({ ...bookingData, start_date: e.target.value })}
+                min={new Date().toISOString().split('T')[0]}
+                required
+              />
+              {errors.start_date && <p className="text-sm text-destructive">{errors.start_date}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="group_size">Number of People</Label>
+              <Input
+                id="group_size"
+                name="group_size"
+                type="number"
+                value={bookingData.group_size}
+                onChange={(e) => setBookingData({ ...bookingData, group_size: parseInt(e.target.value) })}
+                min="1"
+                max={selectedTour?.max_group_size || 10}
+                required
+              />
+              {errors.group_size && <p className="text-sm text-destructive">{errors.group_size}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="special_requests">Special Requests (Optional)</Label>
+              <Textarea
+                id="special_requests"
+                name="special_requests"
+                value={bookingData.special_requests}
+                onChange={(e) => setBookingData({ ...bookingData, special_requests: e.target.value })}
+                placeholder="Any special requirements or preferences..."
+                rows={3}
+                maxLength={500}
+              />
+              {errors.special_requests && <p className="text-sm text-destructive">{errors.special_requests}</p>}
+            </div>
+
+            <div className="bg-muted p-4 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total Amount:</span>
+                <span className="text-xl font-bold text-foreground">
+                  NPR {selectedTour && (selectedTour.price_per_person * bookingData.group_size).toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} className="flex-1">
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1 bg-gradient-ocean text-primary-foreground hover:opacity-90">
+                Confirm Booking
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
