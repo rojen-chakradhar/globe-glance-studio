@@ -8,6 +8,7 @@ import { Compass, Calendar, DollarSign, Star, LogOut, User, Settings, Menu, X, C
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const GuideDashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -17,6 +18,7 @@ const GuideDashboard = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
   const [showKycBanner, setShowKycBanner] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -270,7 +272,43 @@ const GuideDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div 
+      className="min-h-screen bg-background"
+      onClick={(e) => {
+        // Block all clicks if KYC is not approved
+        if (kycStatus !== 'approved') {
+          const target = e.target as HTMLElement;
+          // Allow clicks inside the modal itself
+          if (!target.closest('[role="dialog"]') && !showVerifyModal) {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowVerifyModal(true);
+          }
+        }
+      }}
+    >
+      {/* Verify Account Modal */}
+      <Dialog open={showVerifyModal} onOpenChange={setShowVerifyModal}>
+        <DialogContent onClick={(e) => e.stopPropagation()}>
+          <DialogHeader>
+            <DialogTitle>Verify Your Account Now</DialogTitle>
+            <DialogDescription>
+              You need to complete KYC verification to access the guide dashboard and start accepting bookings.
+            </DialogDescription>
+          </DialogHeader>
+          <Button 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowVerifyModal(false);
+              navigate('/guide/kyc');
+            }}
+            className="w-full"
+          >
+            Go to KYC Verification
+          </Button>
+        </DialogContent>
+      </Dialog>
+
       {/* Navigation */}
       <nav className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">

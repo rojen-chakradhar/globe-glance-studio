@@ -197,7 +197,7 @@ const GuideAuth = () => {
         <Card className="w-full max-w-md shadow-elevated">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">
-              {isLogin ? "Guide Login" : "Become a Guide"}
+              {isLogin ? "TravelBuddies Login" : "TravelBuddies Signup"}
             </CardTitle>
             <CardDescription>
               {isLogin

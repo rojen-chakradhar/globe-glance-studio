@@ -35,25 +35,67 @@ const GuideKYC = () => {
     emergencyContactName: "",
     emergencyContactRelation: "",
     emergencyContactPhone: "",
+    personalityType: "",
+    whyChooseYou: "",
   });
 
   const [files, setFiles] = useState({
     citizenship: null as File | null,
     nid: null as File | null,
-    livePhoto: null as File | null,
+    driverLicense: null as File | null,
   });
+
+  const [livePhotoBlob, setLivePhotoBlob] = useState<Blob | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'citizenship' | 'nid' | 'livePhoto') => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'citizenship' | 'nid' | 'driverLicense') => {
     if (e.target.files && e.target.files[0]) {
       setFiles({ ...files, [type]: e.target.files[0] });
     }
   };
 
-  const uploadFile = async (file: File, bucket: string, path: string) => {
+  const capturePhoto = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      video.play();
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx?.drawImage(video, 0, 0);
+
+      stream.getTracks().forEach(track => track.stop());
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          setLivePhotoBlob(blob);
+          setShowCamera(false);
+          toast({
+            title: "Photo Captured",
+            description: "Live photo captured successfully",
+          });
+        }
+      }, 'image/jpeg');
+    } catch (error: any) {
+      toast({
+        title: "Camera Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      setShowCamera(false);
+    }
+  };
+
+  const uploadFile = async (file: File | Blob, bucket: string, path: string) => {
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(path, file, { upsert: true });
@@ -84,32 +126,40 @@ const GuideKYC = () => {
 
       if (profileError) throw profileError;
 
+      // Validate required files
+      if (!files.citizenship || !files.nid || !livePhotoBlob) {
+        throw new Error("Citizenship, NID, and Live Photo are required");
+      }
+
       // Upload files
       let citizenshipUrl = "";
       let nidUrl = "";
       let livePhotoUrl = "";
+      let driverLicenseUrl = "";
 
-      if (files.citizenship) {
-        citizenshipUrl = await uploadFile(
-          files.citizenship,
+      citizenshipUrl = await uploadFile(
+        files.citizenship,
+        "kyc-documents",
+        `${user.id}/citizenship_${Date.now()}.jpg`
+      );
+
+      nidUrl = await uploadFile(
+        files.nid,
+        "kyc-documents",
+        `${user.id}/nid_${Date.now()}.jpg`
+      );
+
+      livePhotoUrl = await uploadFile(
+        livePhotoBlob,
+        "kyc-photos",
+        `${user.id}/live_photo_${Date.now()}.jpg`
+      );
+
+      if (files.driverLicense) {
+        driverLicenseUrl = await uploadFile(
+          files.driverLicense,
           "kyc-documents",
-          `${user.id}/citizenship_${Date.now()}.jpg`
-        );
-      }
-
-      if (files.nid) {
-        nidUrl = await uploadFile(
-          files.nid,
-          "kyc-documents",
-          `${user.id}/nid_${Date.now()}.jpg`
-        );
-      }
-
-      if (files.livePhoto) {
-        livePhotoUrl = await uploadFile(
-          files.livePhoto,
-          "kyc-photos",
-          `${user.id}/live_photo_${Date.now()}.jpg`
+          `${user.id}/driver_license_${Date.now()}.jpg`
         );
       }
 
@@ -126,6 +176,7 @@ const GuideKYC = () => {
           citizenship_photo_url: citizenshipUrl,
           nid_photo_url: nidUrl,
           live_photo_url: livePhotoUrl,
+          driver_license_photo_url: driverLicenseUrl || null,
           qualification: formData.qualification,
           profession: formData.profession,
           languages: formData.languages.split(',').map(l => l.trim()),
@@ -134,6 +185,8 @@ const GuideKYC = () => {
           bad_habits: formData.badHabits,
           hobbies: formData.hobbies,
           dreams: formData.dreams,
+          personality_type: formData.personalityType,
+          why_choose_you: formData.whyChooseYou,
           emergency_contact_name: formData.emergencyContactName,
           emergency_contact_relation: formData.emergencyContactRelation,
           emergency_contact_phone: formData.emergencyContactPhone,
@@ -283,22 +336,39 @@ const GuideKYC = () => {
               </div>
 
               <div>
-                <Label htmlFor="livePhoto">Live Photo</Label>
+                <Label htmlFor="livePhoto">Live Photo (Required) *</Label>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowCamera(true);
+                      setTimeout(capturePhoto, 100);
+                    }}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {livePhotoBlob ? "Photo Captured ✓" : "Capture Live Photo"}
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="driverLicense">Driver's License (Optional)</Label>
                 <div className="flex items-center gap-2">
                   <Input
-                    id="livePhoto"
+                    id="driverLicense"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleFileChange(e, 'livePhoto')}
+                    onChange={(e) => handleFileChange(e, 'driverLicense')}
                     className="hidden"
                   />
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => document.getElementById('livePhoto')?.click()}
+                    onClick={() => document.getElementById('driverLicense')?.click()}
                   >
                     <Upload className="mr-2 h-4 w-4" />
-                    {files.livePhoto ? files.livePhoto.name : "Upload Live Photo"}
+                    {files.driverLicense ? files.driverLicense.name : "Upload Driver's License"}
                   </Button>
                 </div>
               </div>
@@ -369,6 +439,32 @@ const GuideKYC = () => {
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">Personal Details</h2>
               
+              <div>
+                <Label htmlFor="personalityType">Type of Person *</Label>
+                <Select name="personalityType" value={formData.personalityType} onValueChange={(value) => setFormData({ ...formData, personalityType: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select personality type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="extrovert">Extrovert</SelectItem>
+                    <SelectItem value="introvert">Introvert</SelectItem>
+                    <SelectItem value="omnivert">Omnivert</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="whyChooseYou">Why Should Tourists Select You? *</Label>
+                <Textarea
+                  id="whyChooseYou"
+                  name="whyChooseYou"
+                  value={formData.whyChooseYou}
+                  onChange={handleInputChange}
+                  placeholder="Tell tourists what makes you special and why they should choose you as their guide"
+                  required
+                />
+              </div>
+
               <div>
                 <Label htmlFor="badHabits">Bad Habits (Optional)</Label>
                 <Textarea

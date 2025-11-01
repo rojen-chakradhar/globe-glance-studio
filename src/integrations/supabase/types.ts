@@ -134,6 +134,7 @@ export type Database = {
           created_at: string | null
           date_of_birth: string
           dreams: string | null
+          driver_license_photo_url: string | null
           emergency_contact_name: string
           emergency_contact_phone: string
           emergency_contact_relation: string
@@ -147,6 +148,7 @@ export type Database = {
           live_photo_url: string | null
           nid_photo_url: string | null
           permanent_address: string
+          personality_type: string | null
           profession: string
           qualification: string
           services_provided: string
@@ -156,6 +158,7 @@ export type Database = {
           verification_status: string
           verified_at: string | null
           verified_by: string | null
+          why_choose_you: string | null
         }
         Insert: {
           bad_habits?: string | null
@@ -163,6 +166,7 @@ export type Database = {
           created_at?: string | null
           date_of_birth: string
           dreams?: string | null
+          driver_license_photo_url?: string | null
           emergency_contact_name: string
           emergency_contact_phone: string
           emergency_contact_relation: string
@@ -176,6 +180,7 @@ export type Database = {
           live_photo_url?: string | null
           nid_photo_url?: string | null
           permanent_address: string
+          personality_type?: string | null
           profession: string
           qualification: string
           services_provided: string
@@ -185,6 +190,7 @@ export type Database = {
           verification_status?: string
           verified_at?: string | null
           verified_by?: string | null
+          why_choose_you?: string | null
         }
         Update: {
           bad_habits?: string | null
@@ -192,6 +198,7 @@ export type Database = {
           created_at?: string | null
           date_of_birth?: string
           dreams?: string | null
+          driver_license_photo_url?: string | null
           emergency_contact_name?: string
           emergency_contact_phone?: string
           emergency_contact_relation?: string
@@ -205,6 +212,7 @@ export type Database = {
           live_photo_url?: string | null
           nid_photo_url?: string | null
           permanent_address?: string
+          personality_type?: string | null
           profession?: string
           qualification?: string
           services_provided?: string
@@ -214,6 +222,7 @@ export type Database = {
           verification_status?: string
           verified_at?: string | null
           verified_by?: string | null
+          why_choose_you?: string | null
         }
         Relationships: [
           {
