@@ -70,6 +70,13 @@ export default function Map() {
       if (mapInstance.current) {
         npcMarkers.current.forEach(marker => marker.remove());
         guideMarkers.current.forEach(marker => marker.remove());
+        if (routingControl.current && mapInstance.current) {
+          try {
+            mapInstance.current.removeControl(routingControl.current);
+          } catch (e) {
+            // Control might already be removed
+          }
+        }
         mapInstance.current.remove();
         mapInstance.current = null;
       }
@@ -145,8 +152,10 @@ export default function Map() {
 
     mapInstance.current = map;
     
-    // Add NPC guides around tourist
-    addNpcGuides(userLat, userLng);
+    // Add NPC guides around tourist immediately on map load
+    setTimeout(() => {
+      addNpcGuides(userLat, userLng);
+    }, 100);
   };
 
   const addNpcGuides = (userLat: number, userLng: number) => {
@@ -382,7 +391,7 @@ export default function Map() {
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       {/* Sidebar */}
-      <div className="w-full md:w-96 bg-card border-r border-border overflow-y-auto p-4 space-y-4">
+      <div className="w-full md:w-96 bg-card md:border-r border-border overflow-y-auto p-4 space-y-4 max-h-screen md:max-h-none">
 
         <Card className={requestId ? "transition-all" : ""}>
           <CardHeader>
@@ -647,7 +656,7 @@ export default function Map() {
       </div>
 
       {/* Map */}
-      <div className="flex-1 relative min-h-[500px] md:h-screen">
+      <div className="flex-1 relative h-[60vh] md:h-screen order-first md:order-last">
         <div ref={mapContainer} className="w-full h-full" />
       </div>
     </div>
