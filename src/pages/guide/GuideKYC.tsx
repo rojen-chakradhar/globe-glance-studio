@@ -241,8 +241,8 @@ const GuideKYC = () => {
       if (fnError) throw fnError;
 
       toast({
-        title: "KYC Submitted",
-        description: "Your verification is under review. You'll be notified once it's approved.",
+        title: "KYC Approved",
+        description: "Your verification has been approved and your guide account is active.",
       });
 
       navigate("/guide");

@@ -104,7 +104,7 @@ serve(async (req) => {
       emergency_contact_name,
       emergency_contact_relation,
       emergency_contact_phone,
-      verification_status: 'pending',
+      verification_status: 'approved',
     };
 
     const { data: kyc, error: insertError } = await adminClient

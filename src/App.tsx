@@ -39,9 +39,13 @@ const DomainRouter = () => {
     const hostname = window.location.hostname;
     const pathname = window.location.pathname;
     
-    // Check if hostname contains 'guide' keyword for guide domain
-    if (hostname.includes('guide') && !pathname.startsWith('/guide')) {
+    // Route travelone-buddy.vercel.app to guide pages
+    if (hostname === 'travelone-buddy.vercel.app' && !pathname.startsWith('/guide')) {
       setShouldRedirect('/guide');
+    }
+    // Route travelone-home.vercel.app to tourist pages (root)
+    else if (hostname === 'travelone-home.vercel.app' && pathname.startsWith('/guide')) {
+      setShouldRedirect('/');
     }
   }, []);
 
