@@ -103,20 +103,20 @@ const GuideDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
-                <Compass className="h-6 w-6 text-white" />
+            <Link to="/guide" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <div className="h-10 w-10 rounded-full bg-gradient-ocean flex items-center justify-center">
+                <Compass className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-lg font-bold">Travelone Buddies</h1>
+                <h1 className="text-lg font-bold text-foreground">Travelone Buddies</h1>
                 <p className="text-xs text-muted-foreground">Guide Dashboard</p>
               </div>
-            </div>
+            </Link>
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-4">
@@ -177,7 +177,7 @@ const GuideDashboard = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">
             Welcome back, {guideProfile?.full_name || 'Guide'}!
           </h2>
           <p className="text-muted-foreground">Here's your activity overview</p>
@@ -198,34 +198,34 @@ const GuideDashboard = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Pending</CardTitle>
-              <Calendar className="h-4 w-4 text-amber-500" />
+              <CardTitle className="text-sm font-medium text-foreground">Pending</CardTitle>
+              <Calendar className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.pendingBookings}</div>
+              <div className="text-2xl font-bold text-foreground">{stats.pendingBookings}</div>
               <p className="text-xs text-muted-foreground">Awaiting response</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-              <DollarSign className="h-4 w-4 text-emerald-500" />
+              <CardTitle className="text-sm font-medium text-foreground">Total Earnings</CardTitle>
+              <DollarSign className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">NPR {stats.totalEarnings.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-foreground">NPR {stats.totalEarnings.toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">From completed tours</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Rating</CardTitle>
-              <Star className="h-4 w-4 text-amber-500" />
+              <CardTitle className="text-sm font-medium text-foreground">Rating</CardTitle>
+              <Star className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.rating.toFixed(1)}</div>
-              <p className="text-xs text-muted-foreground">{guideProfile?.total_reviews} reviews</p>
+              <div className="text-2xl font-bold text-foreground">{stats.rating.toFixed(1)}</div>
+              <p className="text-xs text-muted-foreground">{guideProfile?.total_reviews || 0} reviews</p>
             </CardContent>
           </Card>
         </div>
@@ -233,7 +233,7 @@ const GuideDashboard = () => {
         {/* Recent Bookings */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Bookings</CardTitle>
+            <CardTitle className="text-foreground">Recent Bookings</CardTitle>
           </CardHeader>
           <CardContent>
             {bookings.length === 0 ? (
@@ -247,17 +247,17 @@ const GuideDashboard = () => {
                 {bookings.slice(0, 5).map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors gap-3"
                   >
-                    <div>
-                      <h4 className="font-semibold">{booking.destination}</h4>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-foreground">{booking.destination}</h4>
                       <p className="text-sm text-muted-foreground">
                         {new Date(booking.start_date).toLocaleDateString()} • {booking.duration_hours}h
                       </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-right">
-                        <p className="font-semibold">NPR {booking.total_amount}</p>
+                    <div className="flex items-center gap-3 sm:text-right">
+                      <div>
+                        <p className="font-semibold text-foreground">NPR {booking.total_amount}</p>
                         <Badge
                           variant={
                             booking.status === 'confirmed'

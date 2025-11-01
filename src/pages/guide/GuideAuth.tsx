@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Compass, ArrowLeft } from "lucide-react";
+import { Compass } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -179,19 +179,15 @@ const GuideAuth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950 flex items-center justify-center p-4">
-      <div className="absolute top-4 left-4">
-        <Link to="/" className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity">
-          <ArrowLeft className="h-5 w-5" />
-          <span className="font-medium">Back to Home</span>
-        </Link>
-      </div>
-
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-elevated">
         <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mb-4">
-            <Compass className="h-8 w-8 text-white" />
-          </div>
+          <Link to="/" className="flex items-center gap-2 justify-center mb-6 hover:opacity-80 transition-opacity">
+            <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-ocean">
+              <Compass className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <span className="text-2xl font-bold text-foreground">Travelone Buddies</span>
+          </Link>
           <CardTitle className="text-2xl">
             {isLogin ? "Guide Login" : "Become a Guide"}
           </CardTitle>
@@ -290,7 +286,7 @@ const GuideAuth = () => {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90"
+              className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90"
               disabled={loading}
             >
               {loading ? "Please wait..." : isLogin ? "Login" : "Sign Up"}

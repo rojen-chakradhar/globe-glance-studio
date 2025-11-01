@@ -102,7 +102,7 @@ const GuideProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
@@ -116,7 +116,7 @@ const GuideProfile = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">My Profile</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">My Profile</h1>
           <p className="text-muted-foreground">Manage your guide information</p>
         </div>
 
@@ -124,14 +124,14 @@ const GuideProfile = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <Card>
             <CardContent className="pt-6 text-center">
-              <Star className="h-8 w-8 mx-auto mb-2 text-amber-500" />
-              <p className="text-2xl font-bold">{profile.rating?.toFixed(1) || '0.0'}</p>
+              <Star className="h-8 w-8 mx-auto mb-2 text-accent" />
+              <p className="text-2xl font-bold text-foreground">{profile.rating?.toFixed(1) || '0.0'}</p>
               <p className="text-xs text-muted-foreground">Rating</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6 text-center">
-              <p className="text-2xl font-bold">{profile.total_reviews || 0}</p>
+              <p className="text-2xl font-bold text-foreground">{profile.total_reviews || 0}</p>
               <p className="text-xs text-muted-foreground">Reviews</p>
             </CardContent>
           </Card>
@@ -148,7 +148,7 @@ const GuideProfile = () => {
         {/* Profile Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
+            <CardTitle className="text-foreground">Profile Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid md:grid-cols-2 gap-4">
@@ -220,7 +220,7 @@ const GuideProfile = () => {
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90"
+              className="w-full bg-gradient-ocean text-primary-foreground hover:opacity-90"
             >
               <Save className="h-4 w-4 mr-2" />
               {saving ? "Saving..." : "Save Changes"}

@@ -84,7 +84,7 @@ const GuideBookings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
@@ -98,12 +98,12 @@ const GuideBookings = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">My Bookings</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">My Bookings</h1>
           <p className="text-muted-foreground">Manage your tour bookings</p>
         </div>
 
         <Tabs defaultValue="all" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-md">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 max-w-md">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="pending">Pending</TabsTrigger>
             <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
@@ -145,10 +145,10 @@ const GuideBookings = () => {
     return filteredBookings.map((booking) => (
       <Card key={booking.id}>
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="text-xl mb-2">{booking.destination}</CardTitle>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+            <div className="flex-1">
+              <CardTitle className="text-lg sm:text-xl mb-2 text-foreground">{booking.destination}</CardTitle>
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   {new Date(booking.start_date).toLocaleDateString()}
@@ -178,15 +178,15 @@ const GuideBookings = () => {
           <div className="space-y-4">
             {booking.special_requests && (
               <div>
-                <h4 className="font-semibold text-sm mb-1">Special Requests</h4>
+                <h4 className="font-semibold text-sm mb-1 text-foreground">Special Requests</h4>
                 <p className="text-sm text-muted-foreground">{booking.special_requests}</p>
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-border">
               <div>
                 <p className="text-sm text-muted-foreground">Amount</p>
-                <p className="text-2xl font-bold">NPR {booking.total_amount}</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">NPR {booking.total_amount}</p>
               </div>
 
               {booking.status === 'pending' && (
@@ -202,7 +202,7 @@ const GuideBookings = () => {
                   </Button>
                   <Button
                     size="sm"
-                    className="bg-emerald-600 hover:bg-emerald-700"
+                    className="bg-gradient-ocean text-primary-foreground hover:opacity-90"
                     onClick={() => updateBookingStatus(booking.id, 'confirmed')}
                   >
                     <CheckCircle className="h-4 w-4 mr-1" />
@@ -214,7 +214,7 @@ const GuideBookings = () => {
               {booking.status === 'confirmed' && (
                 <Button
                   size="sm"
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="bg-gradient-ocean text-primary-foreground hover:opacity-90"
                   onClick={() => updateBookingStatus(booking.id, 'completed')}
                 >
                   <CheckCircle className="h-4 w-4 mr-1" />

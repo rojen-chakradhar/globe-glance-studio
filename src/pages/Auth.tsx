@@ -128,7 +128,7 @@ const Auth = () => {
       
       const redirectUrl = `${window.location.origin}/`;
       
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: validated.email,
         password: validated.password,
         options: {
@@ -154,7 +154,13 @@ const Auth = () => {
             description: error.message,
           });
         }
-      } else {
+      } else if (data.user) {
+        // Insert tourist role
+        await supabase.from('user_roles').insert({
+          user_id: data.user.id,
+          role: 'tourist',
+        });
+
         toast({
           title: "Account Created!",
           description: "Your account has been created successfully. You can now login.",

@@ -158,6 +158,11 @@ const Index = () => {
                       Events
                     </Button>
                   </Link>
+                  <Link to="/guide/auth?mode=signup">
+                    <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
+                      Become a Guide
+                    </Button>
+                  </Link>
                   <Link to="/auth">
                     <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
                       Login
@@ -235,6 +240,11 @@ const Index = () => {
                       <Link to="/events" onClick={() => setMobileMenuOpen(false)}>
                         <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
                           Events
+                        </Button>
+                      </Link>
+                      <Link to="/guide/auth?mode=signup" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
+                          Become a Guide
                         </Button>
                       </Link>
                       <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
