@@ -148,9 +148,35 @@ const GuideKYC = () => {
         return;
       }
 
-      // Validate required files
-      if (!files.citizenship || !files.nid || !livePhotoBlob) {
-        throw new Error("Citizenship, NID, and Live Photo are required");
+      // Validate all required fields with clear messages
+      const missingFields: string[] = [];
+      
+      if (!formData.fullGovernmentName) missingFields.push("Full Government Name");
+      if (!dateOfBirth) missingFields.push("Date of Birth");
+      if (!formData.gender) missingFields.push("Gender");
+      if (!formData.permanentAddress) missingFields.push("Permanent Address");
+      if (!files.citizenship) missingFields.push("Citizenship Photo");
+      if (!files.nid) missingFields.push("National ID Photo");
+      if (!livePhotoBlob) missingFields.push("Live Photo");
+      if (!formData.qualification) missingFields.push("Qualification");
+      if (!formData.profession) missingFields.push("Profession");
+      if (!formData.languages) missingFields.push("Languages");
+      if (!formData.experienceDescription) missingFields.push("Experience Description");
+      if (!formData.servicesProvided) missingFields.push("Services Provided");
+      if (!formData.personalityType) missingFields.push("Type of Person");
+      if (!formData.whyChooseYou) missingFields.push("Why Should Tourists Select You");
+      if (!formData.emergencyContactName) missingFields.push("Emergency Contact Name");
+      if (!formData.emergencyContactRelation) missingFields.push("Emergency Contact Relation");
+      if (!formData.emergencyContactPhone) missingFields.push("Emergency Contact Phone");
+
+      if (missingFields.length > 0) {
+        toast({
+          title: "Missing Required Fields",
+          description: `Please fill in: ${missingFields.join(", ")}`,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
       }
 
       // Upload files
@@ -215,8 +241,8 @@ const GuideKYC = () => {
       if (fnError) throw fnError;
 
       toast({
-        title: "KYC approved",
-        description: "Your verification has been approved and your guide account is active.",
+        title: "KYC Submitted",
+        description: "Your verification is under review. You'll be notified once it's approved.",
       });
 
       navigate("/guide");
@@ -544,6 +570,7 @@ const GuideKYC = () => {
                   name="badHabits"
                   value={formData.badHabits}
                   onChange={handleInputChange}
+                  placeholder="e.g., smoking, alcoholic, etc."
                 />
               </div>
 

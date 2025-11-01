@@ -2,8 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
+import { useEffect, useState } from "react";
 import Index from "./pages/Index";
 
 import Auth from "./pages/Auth";
@@ -31,6 +32,26 @@ import MyBookings from "./pages/MyBookings";
 
 const queryClient = new QueryClient();
 
+const DomainRouter = () => {
+  const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
+
+  useEffect(() => {
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
+    
+    // Check if hostname contains 'guide' keyword for guide domain
+    if (hostname.includes('guide') && !pathname.startsWith('/guide')) {
+      setShouldRedirect('/guide');
+    }
+  }, []);
+
+  if (shouldRedirect) {
+    return <Navigate to={shouldRedirect} replace />;
+  }
+
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <CurrencyProvider>
@@ -38,6 +59,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <DomainRouter />
         <Routes>
           <Route path="/" element={<Index />} />
           
