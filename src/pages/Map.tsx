@@ -50,6 +50,16 @@ export default function Map() {
   const mapInstance = useRef<L.Map | null>(null);
   const routingControl = useRef<any>(null);
   const guideMarkers = useRef<L.Marker[]>([]);
+  const npcMarkers = useRef<L.Marker[]>([]);
+
+  // Mock NPC guides data
+  const npcGuides = [
+    { id: 'npc1', name: 'Ramesh Sharma', specialty: 'Cultural Tours', rating: 4.8 },
+    { id: 'npc2', name: 'Sita Gurung', specialty: 'Mountain Trekking', rating: 4.9 },
+    { id: 'npc3', name: 'Krishna Thapa', specialty: 'Historical Sites', rating: 4.7 },
+    { id: 'npc4', name: 'Maya Rai', specialty: 'Food & Culture', rating: 5.0 },
+    { id: 'npc5', name: 'Bikash Lama', specialty: 'Adventure Tours', rating: 4.6 },
+  ];
 
   useEffect(() => {
     if (mapContainer.current && !mapInstance.current) {
@@ -58,6 +68,8 @@ export default function Map() {
 
     return () => {
       if (mapInstance.current) {
+        npcMarkers.current.forEach(marker => marker.remove());
+        guideMarkers.current.forEach(marker => marker.remove());
         mapInstance.current.remove();
         mapInstance.current = null;
       }
@@ -132,6 +144,37 @@ export default function Map() {
       .bindPopup("<b>Your Location</b>");
 
     mapInstance.current = map;
+    
+    // Add NPC guides around tourist
+    addNpcGuides(userLat, userLng);
+  };
+
+  const addNpcGuides = (userLat: number, userLng: number) => {
+    if (!mapInstance.current) return;
+
+    // Clear existing NPC markers
+    npcMarkers.current.forEach(marker => marker.remove());
+    npcMarkers.current = [];
+
+    const npcIcon = L.divIcon({
+      className: "custom-marker",
+      html: '<div style="background: #8b5cf6; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: white; border: 2px solid white; box-shadow: 0 2px 8px rgba(139,92,246,0.4); cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>',
+      iconSize: [36, 36],
+    });
+
+    // Scatter NPC guides around the tourist location
+    npcGuides.forEach((guide, index) => {
+      const angle = (360 / npcGuides.length) * index;
+      const distance = 0.015 + (Math.random() * 0.01); // Random distance between 0.015 and 0.025
+      const npcLat = userLat + (distance * Math.sin(angle * Math.PI / 180));
+      const npcLng = userLng + (distance * Math.cos(angle * Math.PI / 180));
+
+      const marker = L.marker([npcLat, npcLng], { icon: npcIcon })
+        .addTo(mapInstance.current!)
+        .bindPopup(`<b>${guide.name}</b><br>${guide.specialty}<br>⭐ ${guide.rating}`);
+
+      npcMarkers.current.push(marker);
+    });
   };
 
   const updateMapMarkers = async () => {
@@ -157,9 +200,18 @@ export default function Map() {
       }
     }
 
+    // Hide NPC guides when real guides show interest
+    if (interestedGuides.length > 0) {
+      npcMarkers.current.forEach(marker => marker.remove());
+      npcMarkers.current = [];
+    } else {
+      // Show NPC guides if no real guides yet
+      addNpcGuides(userLat, userLng);
+    }
+
     const guideIcon = L.divIcon({
       className: "custom-marker",
-      html: '<div style="background: #3b82f6; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border: 3px solid white; box-shadow: 0 4px 12px rgba(59,130,246,0.5); cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>',
+      html: '<div style="background: #3b82f6; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; border: 3px solid white; box-shadow: 0 4px 12px rgba(59,130,246,0.5); cursor: pointer; position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><div style="position: absolute; top: -28px; left: 50%; transform: translateX(-50%); background: white; color: #3b82f6; padding: 2px 8px; border-radius: 12px; font-size: 10px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-weight: 600;">Viewing Interest</div></div>',
       iconSize: [40, 40],
     });
 
@@ -170,7 +222,7 @@ export default function Map() {
 
       const marker = L.marker([guideLat, guideLng], { icon: guideIcon })
         .addTo(mapInstance.current!)
-        .bindPopup(`<b>${guide.guide_profiles.full_name}</b><br>${formatPrice(guide.counter_offer_price)}/hour`);
+        .bindPopup(`<b>${guide.guide_profiles.full_name}</b><br>${formatPrice(guide.counter_offer_price)}/hour<br><span style="color: #3b82f6; font-weight: 600;">📍 Viewing Interest</span>`);
 
       marker.on('click', () => {
         setSelectedGuide(guide.guide_id);
@@ -595,7 +647,7 @@ export default function Map() {
       </div>
 
       {/* Map */}
-      <div className="flex-1 relative h-96 md:h-screen">
+      <div className="flex-1 relative min-h-[500px] md:h-screen">
         <div ref={mapContainer} className="w-full h-full" />
       </div>
     </div>
