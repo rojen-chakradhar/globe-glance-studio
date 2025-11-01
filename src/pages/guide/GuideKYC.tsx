@@ -132,9 +132,19 @@ const GuideKYC = () => {
         .from("guide_profiles")
         .select("id")
         .eq("user_id", user.id)
-        .single();
+          .maybeSingle();
 
       if (profileError) throw profileError;
+      if (!guideProfile) {
+        toast({
+          title: "Profile required",
+          description: "Please complete your guide profile before submitting KYC.",
+          variant: "destructive",
+        });
+        navigate("/guide/profile");
+        setLoading(false);
+        return;
+      }
 
       // Validate required files
       if (!files.citizenship || !files.nid || !livePhotoBlob) {

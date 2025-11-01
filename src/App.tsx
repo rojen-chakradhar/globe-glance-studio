@@ -25,6 +25,7 @@ import MyRequests from "./pages/MyRequests";
 import InterestedGuides from "./pages/InterestedGuides";
 import MeetingRoute from "./pages/MeetingRoute";
 import GuideRequests from "./pages/guide/GuideRequests";
+import Map from "./pages/Map";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/my-requests" element={<MyRequests />} />
           <Route path="/interested-guides/:requestId" element={<InterestedGuides />} />
           <Route path="/meeting-route/:requestId" element={<MeetingRoute />} />
+          <Route path="/map" element={<Map />} />
           
           {/* Guide Routes */}
           <Route path="/guide/auth" element={<GuideAuth />} />
