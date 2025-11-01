@@ -15,7 +15,6 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import MapboxBuddyMap from "@/components/MapboxBuddyMap";
 
 const STANDARD_HOURLY_RATE = 50;
 const PRICE_INCREMENT = 5;
@@ -106,6 +105,30 @@ export default function Map() {
     });
     ro.observe(mapContainer.current);
     return () => ro.disconnect();
+  }, []);
+
+  // Explicit mobile height fix using innerHeight (avoids iOS vh bugs)
+  useEffect(() => {
+    const update = () => {
+      if (!mapContainer.current) return;
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      if (isMobile) {
+        const h = Math.max(Math.round(window.innerHeight * 0.7), 420);
+        mapContainer.current.style.height = `${h}px`;
+      } else {
+        mapContainer.current.style.height = '100%';
+      }
+      mapInstance.current?.invalidateSize();
+    };
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+    window.addEventListener('load', update);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+      window.removeEventListener('load', update);
+    };
   }, []);
   useEffect(() => {
     if (requestId) {
@@ -690,7 +713,7 @@ export default function Map() {
 
       {/* Map */}
       <div className="flex-1 relative h-[70vh] md:h-screen min-h-[60vh] order-first md:order-last">
-        <MapboxBuddyMap />
+        <div ref={mapContainer} className="w-full h-full" />
       </div>
     </div>
   );
