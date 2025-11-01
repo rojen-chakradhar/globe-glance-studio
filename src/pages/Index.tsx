@@ -406,12 +406,6 @@ const Index = () => {
             <div className="hidden md:flex items-center gap-4">
             {user ? (
                 <>
-              <Link to="/map">
-                <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
-                  <MapPin className="mr-2 h-4 w-4" />
-                  Find Buddy on Map
-                </Button>
-              </Link>
                   <Link to="/my-requests">
                     <Button variant="ghost" className="text-foreground hover:text-primary transition-colors">
                       My Requests
@@ -512,12 +506,6 @@ const Index = () => {
                         <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
                           <User className="mr-2 h-4 w-4" />
                           Profile
-                        </Button>
-                      </Link>
-                      <Link to="/map" onClick={() => setMobileMenuOpen(false)}>
-                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary transition-colors">
-                          <Users className="mr-2 h-4 w-4" />
-                          Find Buddy on Map
                         </Button>
                       </Link>
                       <Link to="/my-requests" onClick={() => setMobileMenuOpen(false)}>

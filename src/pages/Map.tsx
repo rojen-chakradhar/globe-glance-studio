@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Minus, Plus, ArrowLeft, MapPin, Users, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -318,96 +319,148 @@ export default function Map() {
       {/* Sidebar */}
       <div className="w-full md:w-96 bg-card border-r border-border overflow-y-auto p-4 space-y-4">
 
-        <Card>
+        <Card className={requestId ? "transition-all" : ""}>
           <CardHeader>
-            <CardTitle className="text-xl">Find Your Travel Buddy</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xl">Find Your Travel Buddy</CardTitle>
+              {requestId && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setRequestId(null);
+                    setInterestedGuides([]);
+                    setDestination("");
+                    setRequirements("");
+                    setPrice(STANDARD_PRICE);
+                  }}
+                >
+                  New Search
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="destination">Where do you want to go?</Label>
-                <Input
-                  id="destination"
-                  placeholder="e.g., Pokhara, Chitwan, Kathmandu"
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  required
-                  disabled={!!requestId}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="requirements">What are you looking for?</Label>
-                <Textarea
-                  id="requirements"
-                  placeholder="Describe activities, language preferences, special requirements..."
-                  value={requirements}
-                  onChange={(e) => setRequirements(e.target.value)}
-                  required
-                  disabled={!!requestId}
-                  rows={4}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Your Budget (per day)</Label>
-                  {/* Currency Selector */}
-                  <div className="flex items-center gap-1 p-0.5 bg-muted rounded">
-                    <Button
-                      variant={currency === 'NPR' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => setCurrency('NPR')}
-                      className="h-6 px-2 text-xs"
-                    >
-                      NPR
-                    </Button>
-                    <Button
-                      variant={currency === 'USD' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => setCurrency('USD')}
-                      className="h-6 px-2 text-xs"
-                    >
-                      USD
-                    </Button>
+              {!requestId && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="destination">Where do you want to go?</Label>
+                    <Input
+                      id="destination"
+                      placeholder="e.g., Pokhara, Chitwan, Kathmandu"
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
+                      required
+                    />
                   </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handlePriceChange(false)}
-                    disabled={!!requestId}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <div className="flex-1 text-center">
-                    <div className="text-2xl font-bold">{formatPrice(price)}</div>
-                    <div className="text-xs text-muted-foreground">
-                      Standard: {formatPrice(STANDARD_PRICE)}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="requirements">What are you looking for?</Label>
+                    <Textarea
+                      id="requirements"
+                      placeholder="Describe activities, language preferences, special requirements..."
+                      value={requirements}
+                      onChange={(e) => setRequirements(e.target.value)}
+                      required
+                      rows={4}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Your Budget (per day)</Label>
+                      {/* Currency Selector */}
+                      <div className="flex items-center gap-1 p-0.5 bg-muted rounded">
+                        <Button
+                          variant={currency === 'NPR' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setCurrency('NPR')}
+                          className="h-6 px-2 text-xs"
+                        >
+                          NPR
+                        </Button>
+                        <Button
+                          variant={currency === 'USD' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setCurrency('USD')}
+                          className="h-6 px-2 text-xs"
+                        >
+                          USD
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handlePriceChange(false)}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <div className="flex-1 text-center">
+                        <div className="text-2xl font-bold">{formatPrice(price)}</div>
+                        <div className="text-xs text-muted-foreground">
+                          Standard: {formatPrice(STANDARD_PRICE)}
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handlePriceChange(true)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handlePriceChange(true)}
-                    disabled={!!requestId}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
 
-              {!requestId && (
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? "Searching..." : "Search Guides"}
-                </Button>
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Searching..." : "Search Guides"}
+                  </Button>
+                </>
+              )}
+              
+              {requestId && (
+                <div className="text-sm text-muted-foreground">
+                  <p><span className="font-semibold">Destination:</span> {destination}</p>
+                  <p><span className="font-semibold">Budget:</span> {formatPrice(price)}/day</p>
+                </div>
               )}
             </form>
           </CardContent>
         </Card>
+
+        {requestId && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Your Request</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="p-4 bg-muted rounded-lg space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Destination</span>
+                  <span>{destination}</span>
+                </div>
+                <div className="flex items-start justify-between gap-4">
+                  <span className="font-semibold">Requirements</span>
+                  <span className="text-right text-sm text-muted-foreground">{requirements}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Budget</span>
+                  <span className="text-primary font-bold">{formatPrice(price)}/day</span>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t">
+                  <span className="font-semibold">Status</span>
+                  <Badge variant="secondary">
+                    {interestedGuides.length > 0 ? `${interestedGuides.length} interested` : "Waiting for guides..."}
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {interestedGuides.length > 0 && (
           <Card>
