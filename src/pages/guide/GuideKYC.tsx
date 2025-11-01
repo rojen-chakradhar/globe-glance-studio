@@ -174,7 +174,7 @@ const GuideKYC = () => {
       }
 
       // Submit KYC data
-      const { error: kycError } = await supabase
+      const { data: kycData, error: kycError } = await supabase
         .from("kyc_verifications")
         .insert({
           user_id: user.id,
@@ -200,14 +200,34 @@ const GuideKYC = () => {
           emergency_contact_name: formData.emergencyContactName,
           emergency_contact_relation: formData.emergencyContactRelation,
           emergency_contact_phone: formData.emergencyContactPhone,
-        });
+        })
+        .select()
+        .single();
 
       if (kycError) throw kycError;
 
       toast({
         title: "KYC Submitted Successfully",
-        description: "Your verification is pending review. We'll notify you once approved.",
+        description: "Auto-approving your verification in 3 seconds...",
       });
+
+      // Auto-approve after 3 seconds (temporary for testing)
+      setTimeout(async () => {
+        const { error: approvalError } = await supabase
+          .from("kyc_verifications")
+          .update({
+            verification_status: 'approved',
+            verified_at: new Date().toISOString(),
+          })
+          .eq('user_id', user.id);
+
+        if (!approvalError) {
+          toast({
+            title: "KYC Approved! ✅",
+            description: "Your account has been verified. You can now access all features.",
+          });
+        }
+      }, 3000);
 
       navigate("/guide");
     } catch (error: any) {
